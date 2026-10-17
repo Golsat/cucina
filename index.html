@@ -352,6 +352,14 @@ body {
 }
 .timer-name { font-size: 0.72rem; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; }
 .timer-digits { font-family: monospace; font-size: 1.8rem; font-weight: 800; color: var(--curry-d); margin: 3px 0 6px; }
+@keyframes alarmFlash {
+  0%, 100% { color: #dc2626; transform: scale(1.08); }
+  50% { color: #ea580c; transform: scale(1); }
+}
+.alarm-pulse {
+  animation: alarmFlash 0.55s infinite ease-in-out;
+  font-weight: 900 !important;
+}
 .timer-btns { display: flex; gap: 6px; justify-content: center; }
 .btn-sm {
   font: inherit;
@@ -1183,21 +1191,43 @@ const activeAppTimers = {};
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 const soundCtx = AudioContextClass ? new AudioContextClass() : null;
 
+function unlockAudio() {
+  if (soundCtx && soundCtx.state === 'suspended') {
+    soundCtx.resume().catch(() => {});
+  }
+}
+
+// Sblocco audio su qualsiasi tocco utente iniziale per compatibilità iOS/Android
+document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+document.addEventListener('click', unlockAudio, { once: true, passive: true });
+
 function triggerTimerChime() {
   if (!soundCtx) return;
   try {
-    if (soundCtx.state === 'suspended') soundCtx.resume();
+    if (soundCtx.state === 'suspended') soundCtx.resume().catch(() => {});
     const now = soundCtx.currentTime;
-    const osc = soundCtx.createOscillator();
-    const gain = soundCtx.createGain();
-    osc.connect(gain); gain.connect(soundCtx.destination);
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(587.33, now);
-    osc.frequency.setValueAtTime(880, now + 0.16);
-    osc.frequency.setValueAtTime(1174.66, now + 0.32);
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
-    osc.start(now); osc.stop(now + 0.7);
+    // Suoneria tipo timer da cucina: 3 serie di doppi bip squillanti (880Hz / 1046Hz)
+    const beeps = [
+      { t: 0.0, f: 880 },
+      { t: 0.15, f: 1046 },
+      { t: 0.55, f: 880 },
+      { t: 0.70, f: 1046 },
+      { t: 1.10, f: 880 },
+      { t: 1.25, f: 1046 },
+      { t: 1.65, f: 1046 }
+    ];
+    beeps.forEach(b => {
+      const osc = soundCtx.createOscillator();
+      const gain = soundCtx.createGain();
+      osc.connect(gain);
+      gain.connect(soundCtx.destination);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(b.f, now + b.t);
+      gain.gain.setValueAtTime(0.4, now + b.t);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + b.t + 0.12);
+      osc.start(now + b.t);
+      osc.stop(now + b.t + 0.13);
+    });
   } catch(e) {}
 }
 
@@ -1208,27 +1238,38 @@ function formatSecs(sec) {
 }
 
 function handleTimer(id, defSec) {
+  unlockAudio();
   if (!activeAppTimers[id]) activeAppTimers[id] = { sec: defSec, int: null };
   const t = activeAppTimers[id];
   const disp = document.getElementById('time-' + id);
   if (t.int) {
     clearInterval(t.int); t.int = null;
   } else {
+    if (disp) disp.classList.remove('alarm-pulse');
     t.int = setInterval(() => {
       t.sec--;
-      disp.textContent = formatSecs(t.sec);
+      if (disp) disp.textContent = formatSecs(t.sec);
       if (t.sec <= 0) {
         clearInterval(t.int); t.int = null;
         triggerTimerChime();
-        if ('vibrate' in navigator) navigator.vibrate([250, 100, 250]);
+        if ('vibrate' in navigator) {
+          try { navigator.vibrate([400, 200, 400, 200, 600]); } catch(e) {}
+        }
+        if (disp) disp.classList.add('alarm-pulse');
+        showToast(`⏰ Tempo scaduto per il timer!`);
       }
     }, 1000);
   }
 }
 
 function resetAppTimer(id, defSec) {
+  unlockAudio();
   if (activeAppTimers[id]) { clearInterval(activeAppTimers[id].int); activeAppTimers[id] = null; }
-  document.getElementById('time-' + id).textContent = formatSecs(defSec);
+  const disp = document.getElementById('time-' + id);
+  if (disp) {
+    disp.textContent = formatSecs(defSec);
+    disp.classList.remove('alarm-pulse');
+  }
 }
 
 // --- WAKE LOCK API ---
