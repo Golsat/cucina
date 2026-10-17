@@ -1,7 +1,10 @@
 // Service worker: cache offline di tutta l'app. Incrementa VERSION quando modifichi i file.
-const VERSION = 'cucina-1fffc70929';
+const VERSION = 'cucina-f9a9e8fa9b';
 const FILES = [
   './',
+  './FIORI_DI_ZUCCA/DASHBOARD-FIORI-DI-ZUCCA.html',
+  './FIORI_DI_ZUCCA/assets/dish_final.jpg',
+  './FIORI_DI_ZUCCA/assets/ingredients_flatlay.jpg',
   './OLIVE/DASHBOARD-OLIVE.html',
   './POLLO_AL_CURRY/DASHBOARD-POLLO-AL-CURRY.html',
   './POLLO_AL_CURRY/assets/dish_final.jpg',
