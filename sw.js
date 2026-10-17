@@ -1,14 +1,15 @@
 // Service worker: cache offline di tutta l'app. Incrementa VERSION quando modifichi i file.
-const VERSION = 'cucina-v1';
+const VERSION = 'cucina-1fffc70929';
 const FILES = [
   './',
-  './index.html',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
+  './OLIVE/DASHBOARD-OLIVE.html',
+  './POLLO_AL_CURRY/DASHBOARD-POLLO-AL-CURRY.html',
   './POLLO_AL_CURRY/assets/dish_final.jpg',
   './POLLO_AL_CURRY/assets/ingredients_flatlay.jpg',
-  './OLIVE/DASHBOARD-OLIVE.html'
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './index.html',
+  './manifest.json'
 ];
 
 self.addEventListener('install', e => {
