@@ -737,7 +737,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(0, this.checked)"> Fatto</label>
           </div>
           <div class="step-title">🔪 Taglio del Pollo & Marinatura Lampo</div>
-          <p class="step-p">Taglia il pollo a bocconcini regolari di circa 2.5 cm. Metti in ciotola con un pizzico di sale e mezzo cucchiaio di curry. Mescola bene e lascia a temperatura ambiente mentre prepari gli aromi.</p>
+          <p class="step-p" id="curryStep0Desc">Taglia il pollo a bocconcini regolari di circa 2.5 cm. Metti in ciotola con un pizzico di sale e mezzo cucchiaio di curry. Mescola bene e lascia a temperatura ambiente mentre prepari gli aromi.</p>
         </div>
 
         <!-- Step 2 -->
@@ -747,7 +747,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(1, this.checked)"> Fatto</label>
           </div>
           <div class="step-title">🍚 Cottura del Riso Basmati per Assorbimento</div>
-          <p class="step-p">Sciacqua il riso basmati fino ad acqua limpida (rimuove l'amido). Mettilo nel pentolino con l'acqua fredda salata indicata (rapporto 1:1.5). Porta a bollore, poi <strong>copri ermeticamente</strong>, fiamma al minimo per <strong>11 minuti senza mai aprire né mescolare</strong>. Spegni e fai riposare 5 min prima di sgranarlo con la forchetta.</p>
+          <p class="step-p" id="curryStep1Desc">Sciacqua il riso basmati fino ad acqua limpida (rimuove l'amido). Mettilo nel pentolino con l'acqua fredda salata indicata (rapporto 1:1.5). Porta a bollore, poi <strong>copri ermeticamente</strong>, fiamma al minimo per <strong>11 minuti senza mai aprire né mescolare</strong>. Spegni e fai riposare 5 min prima di sgranarlo con la forchetta.</p>
         </div>
 
         <!-- Step 3 -->
@@ -757,7 +757,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(2, this.checked)"> Fatto</label>
           </div>
           <div class="step-title">🧅 Soffritto & Tostatura a Secco delle Spezie</div>
-          <p class="step-p">Scalda l'olio in un wok o padella. Fai appassire la cipolla tritata per 3 minuti. Aggiungi aglio e zenzero per 1 minuto, poi versa il curry: tosta a secco nell'olio caldo per <strong>30-40 secondi</strong> mescolando energicamente per attivare gli oli essenziali.</p>
+          <p class="step-p" id="curryStep2Desc">Scalda l'olio in un wok o padella. Fai appassire la cipolla tritata per 3 minuti. Aggiungi aglio e zenzero per 1 minuto, poi versa il curry: tosta a secco nell'olio caldo per <strong>30-40 secondi</strong> mescolando energicamente per attivare gli oli essenziali.</p>
         </div>
 
         <!-- Step 4 -->
@@ -767,7 +767,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(3, this.checked)"> Fatto</label>
           </div>
           <div class="step-title">🍗 Sigillatura del Pollo a Fiamma Viva</div>
-          <p class="step-p">Alza la fiamma a medio-alta, unisci i bocconcini di pollo e rosola per 5-6 minuti girandoli spesso finché non sono sigillati e dorati su tutti i lati.</p>
+          <p class="step-p" id="curryStep3Desc">Alza la fiamma a medio-alta, unisci i bocconcini di pollo e rosola per 5-6 minuti girandoli spesso finché non sono sigillati e dorati su tutti i lati.</p>
         </div>
 
         <!-- Step 5 (Dinamico a seconda della variante crema) -->
@@ -787,7 +787,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(5, this.checked)"> Fatto</label>
           </div>
           <div class="step-title">🌿 Tocco di Lime, Erbe Fresche & Impiattamento</div>
-          <p class="step-p">A fuoco spento aggiungi una spruzzata di succo di lime fresco e coriandolo o prezzemolo tritato. Impiatta versando il pollo al curry fumante accanto al riso basmati sgranato.</p>
+          <p class="step-p" id="curryStep5Desc">A fuoco spento aggiungi una spruzzata di succo di lime fresco e coriandolo o prezzemolo tritato. Impiatta versando il pollo al curry fumante accanto al riso basmati sgranato.</p>
         </div>
 
       </div>
@@ -975,6 +975,72 @@ function renderCurryIngredients() {
     };
     ul.appendChild(li);
   });
+
+  renderCurrySteps();
+}
+
+function renderCurrySteps() {
+  const p = curryCurrentPortions;
+  const isSovracosce = pantrySettings.meat === 'sovracosce';
+  const carneGrammi = isSovracosce ? (160 * p) : (150 * p);
+  const carneNome = isSovracosce ? 'sovracosce disossate a cubetti' : 'petto di pollo a cubetti';
+  const risoGrammi = 80 * p;
+  const acquaRiso = 120 * p;
+  const cipollaDose = p === 2 ? '½ cipolla' : (p === 3 ? '¾ di cipolla' : '1 cipolla intera');
+  const aglioDose = p === 2 ? '1 spicchio d’aglio' : (p === 3 ? '1 spicchio e mezzo d’aglio' : '2 spicchi d’aglio');
+  const zenzeroDose = (4 * p) + ' g di zenzero fresco';
+  const spezieDose = (0.5 * p) + ' cucchiai di ' + (pantrySettings.spices === 'curry' ? 'curry in polvere' : 'mix curcuma/cumino/coriandolo');
+  const olioDose = (0.5 * p) + ' cucchiai di olio EVO';
+
+  // Step 0
+  const s0 = document.getElementById('curryStep0Desc');
+  if (s0) {
+    s0.innerHTML = `Taglia i <strong>${carneGrammi} g di ${carneNome}</strong> a bocconcini regolari di circa 2.5 cm. Metti in ciotola con un pizzico di sale e mezzo cucchiaino di curry. Mescola bene e lascia a temperatura ambiente mentre prepari gli aromi.`;
+  }
+
+  // Step 1
+  const s1 = document.getElementById('curryStep1Desc');
+  if (s1) {
+    s1.innerHTML = `Sciacqua bene i <strong>${risoGrammi} g di riso basmati</strong> fino ad acqua limpida (rimuove l'amido). Mettilo nel pentolino con i <strong>${acquaRiso} ml di acqua fredda</strong> salata (rapporto 1:1.5). Porta a bollore, poi <strong>copri ermeticamente</strong>, fiamma al minimo per <strong>11 minuti senza mai aprire né mescolare</strong>. Spegni e fai riposare 5 min prima di sgranarlo con la forchetta.`;
+  }
+
+  // Step 2
+  const s2 = document.getElementById('curryStep2Desc');
+  if (s2) {
+    s2.innerHTML = `Scalda i <strong>${olioDose}</strong> in un wok o padella larga. Fai appassire la cipolla tritata (<strong>${cipollaDose}</strong>) per 3 minuti. Aggiungi <strong>${aglioDose}</strong> e <strong>${zenzeroDose}</strong> grattugiato per 1 minuto, poi versa le spezie (<strong>${spezieDose}</strong>): tosta a secco nell'olio caldo per <strong>30-40 secondi</strong> mescolando energicamente per attivare gli oli essenziali.`;
+  }
+
+  // Step 3
+  const s3 = document.getElementById('curryStep3Desc');
+  if (s3) {
+    s3.innerHTML = `Alza la fiamma a medio-alta, unisci i <strong>${carneGrammi} g di bocconcini di pollo</strong> e rosola per 5-6 minuti girandoli spesso finché non sono sigillati e dorati su tutti i lati.`;
+  }
+
+  // Step 4 (Salsa / Crema)
+  const s4Title = document.getElementById('step5Title');
+  const s4Desc = document.getElementById('step5Desc');
+  if (s4Desc) {
+    if (pantrySettings.cream === 'cocco') {
+      const coccoDose = (100 * p) + ' ml';
+      if (s4Title) s4Title.textContent = '🥥 Crema di Latte di Cocco & Addensamento';
+      s4Desc.innerHTML = `Agita bene la lattina e versa i <strong>${coccoDose} di latte di cocco</strong> in padella. Porta a bollore dolce, poi abbassa la fiamma e fai sobbollire scoperto per 12-15 minuti, finché la salsa si addensa in una crema vellutata e glassante. Regola di sale e pepe.`;
+    } else if (pantrySettings.cream === 'yogurt') {
+      const yogurtDose = (75 * p) + ' g';
+      if (s4Title) s4Title.textContent = '🥛 Mantecatura con Yogurt Greco a Fuoco Spento';
+      s4Desc.innerHTML = `Cuoci il pollo con mezzo bicchiere d’acqua o brodo per 8-10 minuti. <strong>Spegni il fuoco</strong>, unisci i <strong>${yogurtDose} di yogurt greco</strong> (a temperatura ambiente, sbattuto con 2 cucchiai di fondo di cottura) e amalgama per formare la crema vellutata senza farlo cagliare.`;
+    } else {
+      const pannaDose = (60 * p) + ' ml';
+      const brodoDose = (40 * p) + ' ml';
+      if (s4Title) s4Title.textContent = '🍶 Riduzione Panna Fresca & Brodo';
+      s4Desc.innerHTML = `Versa i <strong>${brodoDose} di brodo caldo</strong> e i <strong>${pannaDose} di panna fresca</strong> sul pollo rosolato. Lascia ridurre a fuoco medio per 10-12 minuti finché la salsa vela il cucchiaio.`;
+    }
+  }
+
+  // Step 5
+  const s5 = document.getElementById('curryStep5Desc');
+  if (s5) {
+    s5.innerHTML = `A fuoco spento aggiungi una spruzzata di succo di lime fresco e coriandolo o prezzemolo fresco tritato. Impiatta versando il pollo al curry fumante accanto ai <strong>${risoGrammi} g di riso basmati sgranato</strong>.`;
+  }
 }
 
 function setCurryPortions(val) {
@@ -988,21 +1054,12 @@ function applyPantryVariants() {
   pantrySettings.spices = document.getElementById('switchSpices').value;
 
   const hint = document.getElementById('pantryHintBox');
-  const step5Title = document.getElementById('step5Title');
-  const step5Desc = document.getElementById('step5Desc');
-
   if (pantrySettings.cream === 'cocco') {
     hint.innerHTML = '🥥 <strong>Latte di cocco:</strong> Crema classica vellutata e glassante, naturalmente senza lattosio.';
-    step5Title.textContent = '🥥 Crema di Latte di Cocco & Addensamento';
-    step5Desc.textContent = 'Agita bene la lattina di latte di cocco e versala in padella. Porta a bollore, poi abbassa la fiamma e fai sobbollire scoperto per 12-15 minuti fino a consistenza vellutata.';
   } else if (pantrySettings.cream === 'yogurt') {
     hint.innerHTML = '🥛 <strong>Variante Yogurt Greco:</strong> Sapore fresco e leggero. <em>Attenzione:</em> uniscilo solo a fiamma bassissima o spenta alla fine con 2 cucchiai di acqua calda per non farlo cagliare!';
-    step5Title.textContent = '🥛 Mantecatura con Yogurt Greco a Fuoco Spento';
-    step5Desc.textContent = 'Cuoci il pollo con mezzo bicchiere d’acqua o brodo per 8-10 minuti. Spegni il fuoco, unisci lo yogurt greco sbattuto a temperatura ambiente e amalgama per formare la crema senza scaldare eccessivamente.';
   } else {
     hint.innerHTML = '🍶 <strong>Variante Panna & Brodo:</strong> Gusto rotondo e avvolgente stile pub britannico/italiano.';
-    step5Title.textContent = '🍶 Riduzione Panna Fresca & Brodo';
-    step5Desc.textContent = 'Versa il brodo caldo e la panna fresca sul pollo rosolato. Lascia ridurre a fuoco medio per 10-12 minuti finché la salsa vela il cucchiaio.';
   }
 
   renderCurryIngredients();
