@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#d97706">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cucina">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Dashboard Generale Cucina · Gianluca</title>
+<style>
+:root {
+  --bg: #fbf9f4;
+  --card: #ffffff;
+  --inset: #f4eee2;
+  --border: #e4dbc9;
+  --ink: #1c1813;
+  --ink-sub: #54493c;
+  --ink-muted: #857969;
+  
+  --curry: #d97706;
+  --curry-d: #92400e;
+  --curry-light: #fef3c7;
+  --curry-border: #fde68a;
+  
+  --olive: #65a30d;
+  --olive-d: #3f6212;
+  --olive-light: #ecfccb;
+  
+  --emerald: #059669;
+  --emerald-subtle: #ecfdf5;
+  
+  --radius-xl: 20px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --shadow: 0 4px 18px rgba(35, 25, 10, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141210;
+    --card: #1f1c18;
+    --inset: #29241e;
+    --border: #42382c;
+    --ink: #f7f5ef;
+    --ink-sub: #d3c9bc;
+    --ink-muted: #998e7f;
+    --curry: #f59e0b;
+    --curry-d: #fbbf24;
+    --curry-light: #38270e;
+    --curry-border: #614214;
+    --olive: #a3e635;
+    --olive-d: #bef264;
+    --olive-light: #273809;
+    --emerald: #34d399;
+    --emerald-subtle: #083c2c;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  padding-bottom: 90px;
+}
+
+.shell { max-width: 960px; margin: 0 auto; padding: 14px 16px; }
+
+/* Header Superiore */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--curry-d);
+  letter-spacing: -0.015em;
+}
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.btn-wake {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--inset);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-wake.active {
+  background: var(--emerald-subtle);
+  color: var(--emerald);
+  border-color: var(--emerald);
+}
+
+/* Navigazione Viste */
+.view { display: none; }
+.view.active { display: block; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Cards Generali */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--curry-d);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Banner Benvenuto / KPI Cucina */
+.stats-banner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-pill {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.stat-icon { font-size: 1.8rem; flex-shrink: 0; }
+.stat-val { font-size: 1.25rem; font-weight: 800; color: var(--curry-d); line-height: 1.1; }
+.stat-lbl { font-size: 0.78rem; color: var(--ink-muted); font-weight: 600; }
+
+/* Grid Ricettario Generale */
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+}
+.recipe-tile {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.recipe-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--curry);
+}
+.recipe-tile-img {
+  width: 100%;
+  height: 165px;
+  object-fit: cover;
+  display: block;
+}
+.recipe-tile-body {
+  padding: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.recipe-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.tag-curry { background: var(--curry-light); color: var(--curry-d); border: 1px solid var(--curry-border); }
+.tag-olive { background: var(--olive-light); color: var(--olive-d); }
+.recipe-tile-title {
+  margin: 0 0 6px;
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--curry-d);
+}
+.recipe-tile-desc {
+  margin: 0 0 14px;
+  font-size: 0.88rem;
+  color: var(--ink-sub);
+  line-height: 1.5;
+  flex: 1;
+}
+.recipe-tile-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--curry);
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+/* Scheda Dettaglio Ricetta */
+.recipe-hero {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  align-items: center;
+}
+@media (max-width: 720px) {
+  .recipe-hero { grid-template-columns: 1fr; }
+}
+.recipe-hero-img-box {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  max-height: 250px;
+}
+.recipe-hero-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Switch Varianti Dispensa */
+.variants-box {
+  background: var(--card);
+  border: 2px solid var(--curry-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 16px 0;
+}
+.variants-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.variants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+.input-label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; }
+.select-input {
+  width: 100%;
+  appearance: none;
+  background: var(--inset);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+.select-input:focus { border-color: var(--curry); }
+.hint-callout {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  background: var(--curry-light);
+  border-left: 3px solid var(--curry);
+  color: var(--curry-d);
+}
+
+/* Modulatore Porzioni */
+.portions-bar {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.portion-dropdown {
+  appearance: none;
+  background: var(--card);
+  color: var(--ink);
+  border: 2px solid var(--curry);
+  border-radius: 10px;
+  padding: 8px 36px 8px 14px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Lista Ingredienti Checkable */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 740px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.ing-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.ing-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--inset);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+.ing-item.done { opacity: 0.45; text-decoration: line-through; }
+.ing-item input { width: 18px; height: 18px; accent-color: var(--emerald); cursor: pointer; }
+.ing-name { flex: 1; font-size: 0.92rem; font-weight: 500; }
+.ing-qty { font-weight: 700; color: var(--curry); min-width: 85px; text-align: right; }
+
+/* Timers Cucina */
+.timers-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+.timer-box {
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  text-align: center;
+}
+.timer-name { font-size: 0.72rem; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; }
+.timer-digits { font-family: monospace; font-size: 1.8rem; font-weight: 800; color: var(--curry-d); margin: 3px 0 6px; }
+.timer-btns { display: flex; gap: 6px; justify-content: center; }
+.btn-sm {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--curry);
+  background: var(--curry);
+  color: #fff;
+  cursor: pointer;
+}
+.btn-sm.sec { background: var(--card); color: var(--ink); border-color: var(--border); }
+
+/* Passaggi Ricetta */
+.steps-list { display: grid; gap: 12px; }
+.step-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: var(--card);
+}
+.step-card.done { border-color: var(--emerald); background: var(--emerald-subtle); }
+.step-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.step-badge { font-size: 0.76rem; font-weight: 700; background: var(--curry-light); color: var(--curry-d); padding: 2px 8px; border-radius: 6px; }
+.step-title { margin: 0 0 6px; font-size: 1.05rem; font-weight: 700; }
+.step-p { margin: 0; font-size: 0.92rem; color: var(--ink-sub); line-height: 1.5; }
+.step-p strong { color: var(--ink); }
+
+/* Sezione Note & Revisione */
+.review-form { display: grid; gap: 14px; }
+.form-input {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--inset);
+  color: var(--ink);
+  outline: none;
+}
+.form-input:focus { border-color: var(--curry); }
+textarea.form-input { min-height: 100px; resize: vertical; }
+
+.star-rating { display: inline-flex; gap: 6px; font-size: 1.8rem; cursor: pointer; user-select: none; }
+.star-rating span { color: var(--border); transition: transform 0.1s; }
+.star-rating span.active { color: #f59e0b; }
+
+.review-card {
+  background: var(--inset);
+  border-left: 3px solid var(--curry);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--curry-d); }
+.review-text { margin: 0; font-size: 0.9rem; color: var(--ink); white-space: pre-wrap; line-height: 1.5; }
+
+/* Bottom Nav Mobile */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 65px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+.nav-tab.active { color: var(--curry); }
+.nav-tab-icon { font-size: 1.25rem; }
+
+.btn-main {
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: var(--curry);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 18px;
+  cursor: pointer;
+}
+.btn-main:hover { opacity: 0.9; }
+
+.toast-msg {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 9px 18px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s;
+  z-index: 999;
+}
+.toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Header Generale App -->
+  <header class="header-top">
+    <div class="brand-title">
+      <span>👨‍🍳</span> <span>Cucina di Gianluca</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-wake" id="screenWakeBtn" onclick="toggleScreenWake()">
+        <span>💡</span> <span id="screenWakeLabel">Tieni schermo acceso</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= VISTA 1: DASHBOARD GENERALE (RICETTARIO) ================= -->
+  <main class="view active" id="view-dashboard">
+    <!-- Statistiche & Riepilogo Cucina -->
+    <section class="stats-banner">
+      <div class="stat-pill">
+        <div class="stat-icon">📖</div>
+        <div>
+          <div class="stat-val" id="totalRecipesCount">2</div>
+          <div class="stat-lbl">Ricette in Cartella</div>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-icon">📝</div>
+        <div>
+          <div class="stat-val" id="totalNotesCount">0</div>
+          <div class="stat-lbl">Revisioni Registrate</div>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-icon">🔄</div>
+        <div>
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Varianti Dispensa</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Elenco Cartelle Ricetta -->
+    <section class="card">
+      <div class="card-title">
+        <span>📂 Le Mie Ricette Culinari</span>
+        <span style="font-size:0.8rem; font-weight:normal; color:var(--ink-muted);">Seleziona per cucinare</span>
+      </div>
+
+      <div class="recipes-grid">
+        <!-- 1. Pollo al Curry -->
+        <article class="recipe-tile" onclick="openRecipeView('curry')">
+          <img src="POLLO_AL_CURRY/assets/dish_final.jpg" alt="Pollo al curry con riso basmati" class="recipe-tile-img">
+          <div class="recipe-tile-body">
+            <div class="recipe-tags">
+              <span class="tag tag-curry">🔪 Prep: 15 min</span>
+              <span class="tag tag-curry">🔥 Cottura: 25 min</span>
+              <span class="tag tag-curry">⏱️ Totale: 40 min</span>
+              <span class="tag tag-curry">🥥 Varianti Dispensa</span>
+            </div>
+            <h3 class="recipe-tile-title">🍛 Pollo al Curry con Riso Basmati</h3>
+            <p class="recipe-tile-desc">
+              Bocconcini succosi speziati al curry con vellutata crema al cocco (o yogurt) e riso basmati a chicchi sgranati per assorbimento.
+            </p>
+            <div class="recipe-tile-footer">
+              <span>👥 Dosi per 2, 3 o 4 persone</span>
+              <span>Apri Ricetta →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. Olive di Esperia -->
+        <article class="recipe-tile" onclick="window.location.href='OLIVE/DASHBOARD-OLIVE.html'">
+          <div style="height:165px; background:#4a5619; display:flex; align-items:center; justify-content:center; font-size:3.5rem;">
+            🫒
+          </div>
+          <div class="recipe-tile-body">
+            <div class="recipe-tags">
+              <span class="tag tag-olive">🌿 Conserva</span>
+              <span class="tag tag-olive">🧂 Calcolo Sale 7%</span>
+              <span class="tag tag-olive">📅 Calendario 5gg</span>
+            </div>
+            <h3 class="recipe-tile-title" style="color:#4a5619;">🫒 Conserva Olive (Esperia)</h3>
+            <p class="recipe-tile-desc">
+              Ammollo con cambio quotidiano dell'acqua per 5 giorni, calcolatore del sale grosso al 7% del peso e procedura di salamoia.
+            </p>
+            <div class="recipe-tile-footer" style="color:#4a5619;">
+              <span>⚖️ Calcolo peso olive</span>
+              <span>Apri Dashboard →</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= VISTA 2: DETTAGLIO RICETTA (POLLO AL CURRY & VARIANTI) ================= -->
+  <section class="view" id="view-curry">
+    
+    <!-- Hero Ricetta con Immagine Piatto Finito -->
+    <div class="card">
+      <div class="recipe-hero">
+        <div>
+          <button style="background:none; border:none; padding:0; color:var(--curry); font-weight:700; font-size:0.85rem; cursor:pointer; margin-bottom:6px;" onclick="goToTab('dashboard')">← Torna al Ricettario</button>
+          <h1 style="margin:0 0 6px; font-size:1.75rem; color:var(--curry-d); line-height:1.2;">🍛 Pollo al Curry con Riso Basmati</h1>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <span class="tag tag-curry">🔪 Preparazione: 15 min</span>
+            <span class="tag tag-curry">🔥 Cottura: 25 min</span>
+            <span class="tag tag-curry">⏱️ Tempo Totale: 40 min</span>
+          </div>
+          <p style="margin:0 0 14px; font-size:0.95rem; color:var(--ink-sub);">Bocconcini teneri avvolti da una salsa vellutata e profumata, serviti con riso basmati per assorbimento.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-main" style="padding:6px 14px; font-size:0.82rem;" onclick="goToTab('notes')">📝 Revisione Ricetta</button>
+            <button class="btn-main" style="padding:6px 14px; font-size:0.82rem; background:var(--inset); color:var(--ink); border:1px solid var(--border);" onclick="copyCurryList()">📋 Copia Spesa</button>
+          </div>
+        </div>
+        <div class="recipe-hero-img-box">
+          <img src="POLLO_AL_CURRY/assets/dish_final.jpg" alt="Piatto finito">
+        </div>
+      </div>
+
+      <!-- Modulatore Porzioni con Menu a Tendina (2, 3 e 4 persone) -->
+      <div class="portions-bar" style="margin-top:16px; margin-bottom:0;">
+        <div>
+          <strong style="font-size:1rem;">👥 Commensali da cucinare:</strong>
+          <div style="font-size:0.8rem; color:var(--ink-muted);">Tutte le dosi si adattano istantaneamente</div>
+        </div>
+        <div>
+          <select id="portionSelectDropdown" class="portion-dropdown" onchange="setCurryPortions(this.value)">
+            <option value="2">2 Persone</option>
+            <option value="3">3 Persone</option>
+            <option value="4" selected>4 Persone</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Switch Varianti Dispensa (Cosa hai a casa?) -->
+      <div class="variants-box">
+        <div class="variants-header">
+          <div>
+            <strong style="font-size:0.95rem; color:var(--curry-d);">🔄 Adatta agli ingredienti che hai in casa</strong>
+            <div style="font-size:0.78rem; color:var(--ink-muted);">Se ti manca l'ingrediente originale, seleziona l'alternativa:</div>
+          </div>
+        </div>
+
+        <div class="variants-grid">
+          <!-- Switch 1: Base Cremosa -->
+          <div>
+            <label class="input-label">Base Cremosa:</label>
+            <select id="switchCream" class="select-input" onchange="applyPantryVariants()">
+              <option value="cocco" selected>🥥 Latte di Cocco (Originale)</option>
+              <option value="yogurt">🥛 Yogurt Greco intero</option>
+              <option value="panna">🍶 Panna fresca + Brodo</option>
+            </select>
+          </div>
+
+          <!-- Switch 2: Taglio Carne -->
+          <div>
+            <label class="input-label">Taglio Pollo:</label>
+            <select id="switchMeat" class="select-input" onchange="applyPantryVariants()">
+              <option value="sovracosce" selected>🍗 Sovracosce (più succose)</option>
+              <option value="petto">🥩 Petto di pollo a cubetti</option>
+            </select>
+          </div>
+
+          <!-- Switch 3: Spezie Curry -->
+          <div>
+            <label class="input-label">Spezie:</label>
+            <select id="switchSpices" class="select-input" onchange="applyPantryVariants()">
+              <option value="curry" selected>🌶️ Curry in polvere pronto</option>
+              <option value="faidate">✨ Fai-da-te (Curcuma+Cumino+Pepe)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="pantryHintBox" class="hint-callout">
+          🥥 <strong>Base originale:</strong> Latte di cocco intero per una crema setosa, avvolgente e naturalmente senza lattosio.
+        </div>
+      </div>
+    </div>
+
+    <!-- Ingredienti & Timer Rapidi -->
+    <div class="grid-2">
+      <!-- Lista Ingredienti Modulata -->
+      <div class="card">
+        <h2 style="margin:0 0 12px; font-size:1.15rem; color:var(--curry-d);">🛒 Ingredienti (tocca per spuntare)</h2>
+        <ul class="ing-list" id="curryIngredientsList"></ul>
+      </div>
+
+      <!-- Foto Flatlay & Timer -->
+      <div>
+        <div class="card" style="margin-bottom:14px; padding:12px;">
+          <img src="POLLO_AL_CURRY/assets/ingredients_flatlay.jpg" alt="Mise en place" style="width:100%; height:160px; object-fit:cover; border-radius:10px; display:block;">
+          <div style="font-size:0.78rem; text-align:center; color:var(--ink-muted); margin-top:6px;">Mise en place reale degli ingredienti</div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin:0 0 8px; font-size:1.1rem; color:var(--curry-d);">⏱️ Timer Rapidi di Cottura</h2>
+          <div class="timers-container">
+            <div class="timer-box">
+              <div class="timer-name">🍚 Riso</div>
+              <div class="timer-digits" id="time-t1">11:00</div>
+              <div class="timer-btns">
+                <button class="btn-sm" onclick="handleTimer('t1', 660)">Avvia</button>
+                <button class="btn-sm sec" onclick="resetAppTimer('t1', 660)">↺</button>
+              </div>
+            </div>
+            <div class="timer-box">
+              <div class="timer-name">🍗 Pollo</div>
+              <div class="timer-digits" id="time-t2">06:00</div>
+              <div class="timer-btns">
+                <button class="btn-sm" onclick="handleTimer('t2', 360)">Avvia</button>
+                <button class="btn-sm sec" onclick="resetAppTimer('t2', 360)">↺</button>
+              </div>
+            </div>
+            <div class="timer-box">
+              <div class="timer-name">🥥 Salsa</div>
+              <div class="timer-digits" id="time-t3">15:00</div>
+              <div class="timer-btns">
+                <button class="btn-sm" onclick="handleTimer('t3', 900)">Avvia</button>
+                <button class="btn-sm sec" onclick="resetAppTimer('t3', 900)">↺</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- I Passaggi della Ricetta -->
+    <div class="card">
+      <h2 style="margin:0 0 14px; font-size:1.25rem; color:var(--curry-d);">👨‍🍳 I Passaggi della Ricetta</h2>
+      <div class="steps-list">
+        
+        <!-- Step 1 -->
+        <div class="step-card" id="step-card-0">
+          <div class="step-card-header">
+            <span class="step-badge">Fase 1 · 5 min</span>
+            <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(0, this.checked)"> Fatto</label>
+          </div>
+          <div class="step-title">🔪 Taglio del Pollo & Marinatura Lampo</div>
+          <p class="step-p">Taglia il pollo a bocconcini regolari di circa 2.5 cm. Metti in ciotola con un pizzico di sale e mezzo cucchiaio di curry. Mescola bene e lascia a temperatura ambiente mentre prepari gli aromi.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card" id="step-card-1">
+          <div class="step-card-header">
+            <span class="step-badge">Fase 2 · 15 min</span>
+            <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(1, this.checked)"> Fatto</label>
+          </div>
+          <div class="step-title">🍚 Cottura del Riso Basmati per Assorbimento</div>
+          <p class="step-p">Sciacqua il riso basmati fino ad acqua limpida (rimuove l'amido). Mettilo nel pentolino con l'acqua fredda salata indicata (rapporto 1:1.5). Porta a bollore, poi <strong>copri ermeticamente</strong>, fiamma al minimo per <strong>11 minuti senza mai aprire né mescolare</strong>. Spegni e fai riposare 5 min prima di sgranarlo con la forchetta.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card" id="step-card-2">
+          <div class="step-card-header">
+            <span class="step-badge">Fase 3 · 4 min</span>
+            <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(2, this.checked)"> Fatto</label>
+          </div>
+          <div class="step-title">🧅 Soffritto & Tostatura a Secco delle Spezie</div>
+          <p class="step-p">Scalda l'olio in un wok o padella. Fai appassire la cipolla tritata per 3 minuti. Aggiungi aglio e zenzero per 1 minuto, poi versa il curry: tosta a secco nell'olio caldo per <strong>30-40 secondi</strong> mescolando energicamente per attivare gli oli essenziali.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card" id="step-card-3">
+          <div class="step-card-header">
+            <span class="step-badge">Fase 4 · 6 min</span>
+            <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(3, this.checked)"> Fatto</label>
+          </div>
+          <div class="step-title">🍗 Sigillatura del Pollo a Fiamma Viva</div>
+          <p class="step-p">Alza la fiamma a medio-alta, unisci i bocconcini di pollo e rosola per 5-6 minuti girandoli spesso finché non sono sigillati e dorati su tutti i lati.</p>
+        </div>
+
+        <!-- Step 5 (Dinamico a seconda della variante crema) -->
+        <div class="step-card" id="step-card-4">
+          <div class="step-card-header">
+            <span class="step-badge">Fase 5 · 15 min</span>
+            <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(4, this.checked)"> Fatto</label>
+          </div>
+          <div class="step-title" id="step5Title">🥥 Crema di Latte di Cocco & Addensamento</div>
+          <p class="step-p" id="step5Desc">Agita bene la lattina di latte di cocco e versala in padella. Porta a bollore, poi abbassa la fiamma e fai sobbollire scoperto per 12-15 minuti, finché la salsa si addensa in una crema vellutata e glassante. Regola di sale e pepe.</p>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step-card" id="step-card-5">
+          <div class="step-card-header">
+            <span class="step-badge">Fase 6 · 2 min</span>
+            <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStepDone(5, this.checked)"> Fatto</label>
+          </div>
+          <div class="step-title">🌿 Tocco di Lime, Erbe Fresche & Impiattamento</div>
+          <p class="step-p">A fuoco spento aggiungi una spruzzata di succo di lime fresco e coriandolo o prezzemolo tritato. Impiatta versando il pollo al curry fumante accanto al riso basmati sgranato.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA 3: NOTE & REVISIONE RICETTA ================= -->
+  <section class="view" id="view-notes">
+    <div class="card">
+      <h2 style="margin:0 0 6px; font-size:1.3rem; color:var(--curry-d);">📝 Diario di Cucina & Revisione Ricette</h2>
+      <p style="margin:0 0 16px; font-size:0.9rem; color:var(--ink-sub);">
+        Annota le tue impressioni, le modifiche apportate e cosa migliorare la prossima volta per perfezionare la ricetta.
+      </p>
+
+      <div class="review-form">
+        <div>
+          <label class="input-label">Ricetta da revisionare:</label>
+          <select id="noteRecipeSelector" class="form-input" onchange="displayRecipeReviews(this.value)">
+            <option value="pollo_curry" selected>🍛 Pollo al Curry con Riso Basmati</option>
+            <option value="olive">🫒 Conserva Olive (Esperia)</option>
+          </select>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label class="input-label">Data di preparazione:</label>
+            <input type="date" id="newReviewDate" class="form-input">
+          </div>
+          <div>
+            <label class="input-label">Valutazione risultato:</label>
+            <div class="star-rating" id="reviewStarRating">
+              <span data-val="1">★</span>
+              <span data-val="2">★</span>
+              <span data-val="3">★</span>
+              <span data-val="4">★</span>
+              <span data-val="5">★</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="input-label">Ingredienti o marche usate (es. Latte cocco Suzi Wan, Curry Madras Cannamela):</label>
+          <input type="text" id="newReviewBrands" class="form-input" placeholder="Es: Usato yogurt greco al posto del cocco, sovracosce disossate, riso basmati Tilda...">
+        </div>
+
+        <div>
+          <label class="input-label">Note di Revisione (cosa ha funzionato, cosa cambiare la prossima volta):</label>
+          <textarea id="newReviewText" class="form-input" placeholder="Es: La salsa è venuta setosa. La prossima volta aggiungere mezzo cucchiaino di curcuma extra per dare più colore e tostare il curry 10 secondi in più..."></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <button class="btn-main" onclick="submitRecipeReview()">💾 Salva Revisione</button>
+          <span style="font-size:0.8rem; color:var(--ink-muted);">Salvataggio nel browser</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storico Note Salvate -->
+    <div class="card">
+      <h3 style="margin:0 0 12px; font-size:1.1rem; color:var(--curry-d);">📚 Storico Revisioni Registrate</h3>
+      <div id="reviewsListContainer"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Bottom Navigation Bar (Stile App Mobile) -->
+<nav class="bottom-bar">
+  <button class="nav-tab active" id="btn-tab-dashboard" onclick="goToTab('dashboard')">
+    <span class="nav-tab-icon">📖</span>
+    <span>Ricettario</span>
+  </button>
+  <button class="nav-tab" id="btn-tab-curry" onclick="goToTab('curry')">
+    <span class="nav-tab-icon">🍛</span>
+    <span>Pollo Curry</span>
+  </button>
+  <button class="nav-tab" id="btn-tab-notes" onclick="goToTab('notes')">
+    <span class="nav-tab-icon">📝</span>
+    <span>Note & Revisioni</span>
+  </button>
+</nav>
+
+<div class="toast-msg" id="globalToast">Messaggio</div>
+
+<script>
+// --- STATO GENERALE APP ---
+let curryCurrentPortions = 4;
+let curryCheckedIngs = JSON.parse(localStorage.getItem('gianluca_curry_ings') || '[]');
+let curryCheckedSteps = JSON.parse(localStorage.getItem('gianluca_curry_steps') || '[]');
+
+let pantrySettings = {
+  cream: 'cocco',   // cocco | yogurt | panna
+  meat: 'sovracosce', // sovracosce | petto
+  spices: 'curry'   // curry | faidate
+};
+
+// --- NAVIGAZIONE TAB / VISTE ---
+function goToTab(tabName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+
+  const activeView = document.getElementById('view-' + tabName);
+  const activeBtn = document.getElementById('btn-tab-' + tabName);
+  if (activeView) activeView.classList.add('active');
+  if (activeBtn) activeBtn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openRecipeView(recipeId) {
+  goToTab(recipeId);
+}
+
+// --- CALCOLO INGREDIENTI CURRY CON VARIANTI ---
+function getCurryIngredients() {
+  const p = curryCurrentPortions;
+  const items = [];
+
+  // 1. Carne a seconda della variante
+  if (pantrySettings.meat === 'sovracosce') {
+    items.push({ id: 'pollo', name: 'Sovracosce di pollo disossate a bocconcini (più tenere)', qty: (160 * p) + ' g' });
+  } else {
+    items.push({ id: 'pollo', name: 'Petto di pollo a cubetti regolari', qty: (150 * p) + ' g' });
+  }
+
+  // 2. Riso & Acqua
+  items.push({ id: 'riso', name: 'Riso Basmati profumato', qty: (80 * p) + ' g' });
+  items.push({ id: 'acqua', name: 'Acqua fredda per cottura riso (1:1.5)', qty: (120 * p) + ' ml' });
+
+  // 3. Base Cremosa a seconda dello Switch
+  if (pantrySettings.cream === 'cocco') {
+    items.push({ id: 'crema', name: 'Latte di cocco intero cremoso in lattina', qty: (100 * p) + ' ml' });
+  } else if (pantrySettings.cream === 'yogurt') {
+    items.push({ id: 'crema', name: 'Yogurt greco intero al naturale (a temp. ambiente)', qty: (75 * p) + ' g' });
+  } else {
+    items.push({ id: 'crema', name: 'Panna fresca da cucina (60ml) + Brodo (40ml)', qty: (100 * p) + ' ml' });
+  }
+
+  // 4. Spezie
+  if (pantrySettings.spices === 'curry') {
+    items.push({ id: 'spezie', name: 'Curry in polvere (dolce o Madras)', qty: (0.5 * p) + ' cucchiai' });
+  } else {
+    items.push({ id: 'spezie', name: 'Mix Fai-da-te (Curcuma 1c + Cumino ½c + Coriandolo ½c)', qty: (0.5 * p) + ' cucchiai' });
+  }
+
+  // 5. Odori e Aromi
+  items.push({ id: 'cipolla', name: 'Cipolla dorata', qty: (p === 2 ? '½' : (p === 3 ? '¾' : '1')) + ' pz' });
+  items.push({ id: 'aglio', name: 'Spicchi d’aglio sminuzzati', qty: (p === 2 ? '1' : (p === 3 ? '1½' : '2')) + ' spicchi' });
+  items.push({ id: 'zenzero', name: 'Zenzero fresco grattugiato', qty: (4 * p) + ' g' });
+  items.push({ id: 'olio', name: 'Olio EVO o Ghee / Olio di semi', qty: (0.5 * p) + ' cucchiai' });
+  items.push({ id: 'lime', name: 'Succo di lime o limone fresco', qty: 'q.b.' });
+  items.push({ id: 'erbe', name: 'Coriandolo o prezzemolo fresco tritato', qty: 'q.b.' });
+  items.push({ id: 'sale', name: 'Sale fino e pepe nero macinato', qty: 'q.b.' });
+
+  return items;
+}
+
+function renderCurryIngredients() {
+  const ul = document.getElementById('curryIngredientsList');
+  ul.innerHTML = '';
+  const items = getCurryIngredients();
+
+  items.forEach(item => {
+    const isDone = curryCheckedIngs.includes(item.id);
+    const li = document.createElement('li');
+    li.className = 'ing-item' + (isDone ? ' done' : '');
+    li.innerHTML = `
+      <input type="checkbox" ${isDone ? 'checked' : ''}>
+      <span class="ing-name">${item.name}</span>
+      <span class="ing-qty">${item.qty}</span>
+    `;
+    li.onclick = (e) => {
+      if (e.target.tagName !== 'INPUT') {
+        const c = li.querySelector('input');
+        c.checked = !c.checked;
+      }
+      const c = li.querySelector('input');
+      if (c.checked) {
+        if (!curryCheckedIngs.includes(item.id)) curryCheckedIngs.push(item.id);
+      } else {
+        curryCheckedIngs = curryCheckedIngs.filter(x => x !== item.id);
+      }
+      li.classList.toggle('done', c.checked);
+      localStorage.setItem('gianluca_curry_ings', JSON.stringify(curryCheckedIngs));
+    };
+    ul.appendChild(li);
+  });
+}
+
+function setCurryPortions(val) {
+  curryCurrentPortions = parseInt(val, 10);
+  renderCurryIngredients();
+}
+
+function applyPantryVariants() {
+  pantrySettings.cream = document.getElementById('switchCream').value;
+  pantrySettings.meat = document.getElementById('switchMeat').value;
+  pantrySettings.spices = document.getElementById('switchSpices').value;
+
+  const hint = document.getElementById('pantryHintBox');
+  const step5Title = document.getElementById('step5Title');
+  const step5Desc = document.getElementById('step5Desc');
+
+  if (pantrySettings.cream === 'cocco') {
+    hint.innerHTML = '🥥 <strong>Latte di cocco:</strong> Crema classica vellutata e glassante, naturalmente senza lattosio.';
+    step5Title.textContent = '🥥 Crema di Latte di Cocco & Addensamento';
+    step5Desc.textContent = 'Agita bene la lattina di latte di cocco e versala in padella. Porta a bollore, poi abbassa la fiamma e fai sobbollire scoperto per 12-15 minuti fino a consistenza vellutata.';
+  } else if (pantrySettings.cream === 'yogurt') {
+    hint.innerHTML = '🥛 <strong>Variante Yogurt Greco:</strong> Sapore fresco e leggero. <em>Attenzione:</em> uniscilo solo a fiamma bassissima o spenta alla fine con 2 cucchiai di acqua calda per non farlo cagliare!';
+    step5Title.textContent = '🥛 Mantecatura con Yogurt Greco a Fuoco Spento';
+    step5Desc.textContent = 'Cuoci il pollo con mezzo bicchiere d’acqua o brodo per 8-10 minuti. Spegni il fuoco, unisci lo yogurt greco sbattuto a temperatura ambiente e amalgama per formare la crema senza scaldare eccessivamente.';
+  } else {
+    hint.innerHTML = '🍶 <strong>Variante Panna & Brodo:</strong> Gusto rotondo e avvolgente stile pub britannico/italiano.';
+    step5Title.textContent = '🍶 Riduzione Panna Fresca & Brodo';
+    step5Desc.textContent = 'Versa il brodo caldo e la panna fresca sul pollo rosolato. Lascia ridurre a fuoco medio per 10-12 minuti finché la salsa vela il cucchiaio.';
+  }
+
+  renderCurryIngredients();
+}
+
+function toggleStepDone(idx, isDone) {
+  const card = document.getElementById('step-card-' + idx);
+  if (card) card.classList.toggle('done', isDone);
+  if (isDone) {
+    if (!curryCheckedSteps.includes(idx)) curryCheckedSteps.push(idx);
+  } else {
+    curryCheckedSteps = curryCheckedSteps.filter(x => x !== idx);
+  }
+  localStorage.setItem('gianluca_curry_steps', JSON.stringify(curryCheckedSteps));
+}
+
+function restoreStepDone() {
+  for (let i = 0; i < 6; i++) {
+    const card = document.getElementById('step-card-' + i);
+    const isDone = curryCheckedSteps.includes(i);
+    if (card) {
+      card.classList.toggle('done', isDone);
+      const chk = card.querySelector('input[type="checkbox"]');
+      if (chk) chk.checked = isDone;
+    }
+  }
+}
+
+function copyCurryList() {
+  const items = getCurryIngredients();
+  let txt = `🛒 Pollo al Curry (${curryCurrentPortions} persone - variante ${pantrySettings.cream}):\n`;
+  items.forEach(i => txt += `- ${i.name}: ${i.qty}\n`);
+  navigator.clipboard.writeText(txt).then(() => showToast(`Lista ingredienti copiata!`));
+}
+
+// --- GESTIONE NOTE & REVISIONE RICETTA ---
+let selectedReviewStars = 5;
+
+function setupStarPicker() {
+  const box = document.getElementById('reviewStarRating');
+  function setStars(n) {
+    Array.from(box.children).forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.val, 10) <= n);
+    });
+  }
+  setStars(selectedReviewStars);
+  Array.from(box.children).forEach(s => {
+    s.onclick = () => {
+      selectedReviewStars = parseInt(s.dataset.val, 10);
+      setStars(selectedReviewStars);
+    };
+  });
+}
+
+function getAllReviews() {
+  return JSON.parse(localStorage.getItem('gianluca_recipe_reviews_v1') || '{}');
+}
+
+function displayRecipeReviews(recipeKey) {
+  const all = getAllReviews();
+  const list = all[recipeKey] || [];
+  const container = document.getElementById('reviewsListContainer');
+  container.innerHTML = '';
+
+  // Aggiorna conteggio KPI in home
+  let totalCount = 0;
+  Object.keys(all).forEach(k => totalCount += (all[k] || []).length);
+  document.getElementById('totalNotesCount').textContent = totalCount;
+
+  if (list.length === 0) {
+    container.innerHTML = '<div style="font-size:0.88rem; color:var(--ink-muted); text-align:center; padding:18px;">Nessuna nota registrata per questa ricetta. Scrivi la tua prima osservazione sopra!</div>';
+    return;
+  }
+
+  list.slice().reverse().forEach(r => {
+    const stars = '★'.repeat(r.stars) + '☆'.repeat(5 - r.stars);
+    const div = document.createElement('div');
+    div.className = 'review-card';
+    div.innerHTML = `
+      <div class="review-header">
+        <span>📅 ${r.date || 'Data non specificata'}</span>
+        <span style="color:#f59e0b; font-size:1.1rem;">${stars}</span>
+      </div>
+      ${r.brands ? `<div style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:4px;"><b>Ingredienti/Varianti usate:</b> ${r.brands}</div>` : ''}
+      <p class="review-text">${r.text}</p>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function submitRecipeReview() {
+  const recipeKey = document.getElementById('noteRecipeSelector').value;
+  const date = document.getElementById('newReviewDate').value || new Date().toISOString().slice(0, 10);
+  const brands = document.getElementById('newReviewBrands').value.trim();
+  const text = document.getElementById('newReviewText').value.trim();
+
+  if (!text) {
+    alert("Inserisci una nota di revisione prima di salvare.");
+    return;
+  }
+
+  const all = getAllReviews();
+  if (!all[recipeKey]) all[recipeKey] = [];
+  all[recipeKey].push({
+    date: date,
+    stars: selectedReviewStars,
+    brands: brands,
+    text: text,
+    timestamp: Date.now()
+  });
+
+  localStorage.setItem('gianluca_recipe_reviews_v1', JSON.stringify(all));
+  document.getElementById('newReviewText').value = '';
+  document.getElementById('newReviewBrands').value = '';
+  displayRecipeReviews(recipeKey);
+  showToast("Nota di revisione registrata con successo!");
+}
+
+// --- TIMER WEBAUDIO (OFFLINE) ---
+const activeAppTimers = {};
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+const soundCtx = AudioContextClass ? new AudioContextClass() : null;
+
+function triggerTimerChime() {
+  if (!soundCtx) return;
+  try {
+    if (soundCtx.state === 'suspended') soundCtx.resume();
+    const now = soundCtx.currentTime;
+    const osc = soundCtx.createOscillator();
+    const gain = soundCtx.createGain();
+    osc.connect(gain); gain.connect(soundCtx.destination);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(587.33, now);
+    osc.frequency.setValueAtTime(880, now + 0.16);
+    osc.frequency.setValueAtTime(1174.66, now + 0.32);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+    osc.start(now); osc.stop(now + 0.7);
+  } catch(e) {}
+}
+
+function formatSecs(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function handleTimer(id, defSec) {
+  if (!activeAppTimers[id]) activeAppTimers[id] = { sec: defSec, int: null };
+  const t = activeAppTimers[id];
+  const disp = document.getElementById('time-' + id);
+  if (t.int) {
+    clearInterval(t.int); t.int = null;
+  } else {
+    t.int = setInterval(() => {
+      t.sec--;
+      disp.textContent = formatSecs(t.sec);
+      if (t.sec <= 0) {
+        clearInterval(t.int); t.int = null;
+        triggerTimerChime();
+        if ('vibrate' in navigator) navigator.vibrate([250, 100, 250]);
+      }
+    }, 1000);
+  }
+}
+
+function resetAppTimer(id, defSec) {
+  if (activeAppTimers[id]) { clearInterval(activeAppTimers[id].int); activeAppTimers[id] = null; }
+  document.getElementById('time-' + id).textContent = formatSecs(defSec);
+}
+
+// --- WAKE LOCK API ---
+let activeWakeSentinel = null;
+async function toggleScreenWake() {
+  const btn = document.getElementById('screenWakeBtn');
+  const lbl = document.getElementById('screenWakeLabel');
+  if ('wakeLock' in navigator) {
+    if (!activeWakeSentinel) {
+      try {
+        activeWakeSentinel = await navigator.wakeLock.request('screen');
+        btn.classList.add('active');
+        lbl.textContent = 'Schermo sempre attivo (ON)';
+        activeWakeSentinel.addEventListener('release', () => {
+          activeWakeSentinel = null;
+          btn.classList.remove('active');
+          lbl.textContent = 'Tieni schermo acceso';
+        });
+      } catch(e) {}
+    } else {
+      activeWakeSentinel.release();
+      activeWakeSentinel = null;
+      btn.classList.remove('active');
+      lbl.textContent = 'Tieni schermo acceso';
+    }
+  } else {
+    alert("Funzione schermo sempre acceso non supportata su questo browser.");
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('globalToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// --- SERVICE WORKER (uso offline) ---
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// --- AVVIO APP ---
+document.getElementById('newReviewDate').value = new Date().toISOString().slice(0, 10);
+renderCurryIngredients();
+restoreStepDone();
+setupStarPicker();
+displayRecipeReviews('pollo_curry');
+</script>
+</body>
+</html>

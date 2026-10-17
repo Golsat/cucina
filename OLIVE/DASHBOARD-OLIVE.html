@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Olive</title>
+<style>
+:root{--bg:#f6f4ec;--card:#fff;--ink:#2b2b25;--muted:#6b6b5e;--olive:#6b7a2a;--olive-d:#4a5619;--accent:#c98a1b;--ok:#3f7d3a;--line:#e2dfd0}
+@media (prefers-color-scheme:dark){:root{--bg:#1d1e17;--card:#272820;--ink:#ecebdf;--muted:#a3a291;--olive:#9fb343;--olive-d:#c4d86a;--accent:#e0a840;--ok:#7fc178;--line:#3a3b2f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,sans-serif;padding:20px 16px 60px}
+.wrap{max-width:860px;margin:0 auto}
+h1{margin:0 0 4px;font-size:1.7rem;color:var(--olive-d)}
+.sub{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+h2{margin:0 0 12px;font-size:1.1rem;color:var(--olive-d)}
+.hero{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.big{font-size:2.4rem;font-weight:700;color:var(--olive);line-height:1}
+.lbl{color:var(--muted);font-size:.9rem}
+.bar{height:12px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:12px}
+.bar>i{display:block;height:100%;background:var(--olive);width:0;transition:width .3s}
+input[type=date],input[type=number],textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+textarea{width:100%;min-height:90px}
+.days{display:grid;gap:10px}
+.day{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:10px}
+.day.today{border-color:var(--olive);box-shadow:0 0 0 2px var(--olive) inset}
+.day.done{opacity:.65}
+.day input{width:22px;height:22px;accent-color:var(--olive)}
+.day b{display:block}
+.day span{color:var(--muted);font-size:.9rem}
+.final{border-color:var(--accent)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.res{font-size:1.4rem;font-weight:700;color:var(--accent)}
+ol{margin:0;padding-left:20px}
+li{margin-bottom:6px}
+.tag{display:inline-block;background:var(--olive);color:#fff;border-radius:6px;padding:1px 8px;font-size:.8rem}
+.warn{color:var(--muted);font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../index.html" style="display:inline-block;margin-bottom:10px;color:var(--olive-d);font-weight:700;text-decoration:none">← Torna al Ricettario</a>
+  <h1>🫒 Progetto conserva olive</h1>
+  <p class="sub">Olive della pianta di Esperia · fase 1: ammollo in acqua per 5 giorni, acqua cambiata ogni giorno</p>
+
+  <div class="card">
+    <div class="hero">
+      <div>
+        <div class="lbl">Stato</div>
+        <div class="big" id="stato">–</div>
+        <div class="lbl" id="statoSub"></div>
+      </div>
+      <div>
+        <label class="lbl" for="start">Data di inizio ammollo</label><br>
+        <input type="date" id="start">
+      </div>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+  </div>
+
+  <div class="card">
+    <h2>Calendario dell'ammollo</h2>
+    <div class="days" id="days"></div>
+    <div class="day final" id="final" style="margin-top:10px">
+      <div style="font-size:1.6rem">🧂</div>
+      <div><b>Giorno 6 · Salatura</b><span id="finalDate"></span><br><span>Elimina l'acqua in più (lascia solo quanta ne serve a coprire le olive) e aggiungi il sale grosso.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Calcolatore del sale</h2>
+    <div class="row">
+      <div><label class="lbl" for="kg">Peso olive (kg)</label><br><input type="number" id="kg" min="0" step="0.1" placeholder="es. 3"></div>
+      <div><div class="lbl">Sale grosso da aggiungere</div><div class="res" id="sale">–</div></div>
+    </div>
+    <div class="warn">Regola: 70 g di sale grosso per ogni kg di olive (7% del peso).</div>
+  </div>
+
+  <div class="card">
+    <h2>Procedura</h2>
+    <ol>
+      <li>Scegli le olive e <b>butta quelle bucate</b>.</li>
+      <li><b>Pesale</b> e segna il peso qui sopra.</li>
+      <li>Mettile in acqua e <b>cambia l'acqua tutti i giorni</b>.</li>
+      <li>Dopo 5 giorni elimina l'acqua in più, lasciane quanta basta a coprire, e aggiungi <b>70 g di sale grosso per kg</b>.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Da definire</h2>
+    <ol>
+      <li>Per quanto tempo restano in salamoia prima di mangiarle?</li>
+      <li>Aromi da aggiungere (finocchietto, aglio, alloro, peperoncino)?</li>
+      <li>Tipo di olive (varietà, verdi o nere)?</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Note</h2>
+    <textarea id="note" placeholder="Peso, osservazioni, quando hai cambiato l'acqua, assaggi…"></textarea>
+    <div class="warn">Data di inizio, spunte, peso e note si salvano in questo browser.</div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const KEY='olive-esperia-v1';
+let S={start:new Date().toISOString().slice(0,10),done:[],kg:'',note:''};
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return d};
+const fmt=d=>d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
+const todayStr=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+function render(){
+  $('start').value=S.start;
+  const diff=Math.round((new Date(todayStr()+'T12:00:00')-new Date(S.start+'T12:00:00'))/864e5); // 0 = first day
+  const box=$('days');box.innerHTML='';
+  for(let i=0;i<5;i++){
+    const d=document.createElement('label');
+    d.className='day'+(diff===i?' today':'')+(S.done.includes(i)?' done':'');
+    d.innerHTML=`<input type="checkbox" ${S.done.includes(i)?'checked':''}><div><b>Giorno ${i+1}${i===0?' · inizio ammollo':''}${diff===i?' <span class="tag">oggi</span>':''}</b><span>${fmt(addDays(S.start,i))} — cambia l'acqua</span></div>`;
+    d.querySelector('input').onchange=e=>{S.done=e.target.checked?[...new Set([...S.done,i])]:S.done.filter(x=>x!==i);save();render()};
+    box.appendChild(d);
+  }
+  $('finalDate').textContent=fmt(addDays(S.start,5));
+  const left=5-diff;
+  let t,sub;
+  if(diff<0){t='Non iniziato';sub='Inizio '+fmt(addDays(S.start,0))}
+  else if(left>0){t=left+(left===1?' giorno':' giorni');sub='alla salatura ('+fmt(addDays(S.start,5))+')'}
+  else if(left===0){t='Oggi si sala!';sub='5 giorni completati'}
+  else{t='Pronte per la salatura';sub='da '+(-left)+(left===-1?' giorno':' giorni')}
+  $('stato').textContent=t;$('statoSub').textContent=sub;
+  $('prog').style.width=Math.max(0,Math.min(100,(Math.min(Math.max(diff,0),5)/5)*100))+'%';
+  const kg=parseFloat(S.kg);
+  $('sale').textContent=kg>0?Math.round(kg*70)+' g':'–';
+}
+$('start').onchange=e=>{if(e.target.value){S.start=e.target.value;S.done=[];save();render()}};
+$('kg').value=S.kg;$('kg').oninput=e=>{S.kg=e.target.value;save();render()};
+$('note').value=S.note;$('note').oninput=e=>{S.note=e.target.value;save()};
+render();
+</script>
+</body>
+</html>
