@@ -447,8 +447,8 @@ textarea.input-text { min-height: 90px; resize: vertical; }
         <span class="step-num">Fase 1 · 5 min</span>
         <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(0, this.checked)"> Fatto</label>
       </div>
-      <div class="step-title">🌸 Pulizia Delicata dei Fiori</div>
-      <p class="step-desc">
+      <div class="step-title" id="step0Title">🌸 Pulizia Delicata dei Fiori</div>
+      <p class="step-desc" id="step0Desc">
         Non lavare i fiori sotto l'acqua diretta per non inzupparli. Puliscili con carta inumidita. Rimuovi le escrescenze verdi alla base del calice. Apri con cura i petali ed estrai il pistillo interno (è amaro). Lascia 1-2 cm di gambo per afferrarli agevolmente.
       </p>
     </div>
@@ -459,8 +459,8 @@ textarea.input-text { min-height: 90px; resize: vertical; }
         <span class="step-num">Fase 2 · 8 min</span>
         <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(1, this.checked)"> Fatto</label>
       </div>
-      <div class="step-title" id="step2Title">🧀 Farcitura dei Fiori</div>
-      <p class="step-desc" id="step2Desc">
+      <div class="step-title" id="step1Title">🧀 Farcitura dei Fiori</div>
+      <p class="step-desc" id="step1Desc">
         Taglia ogni sottiletta in 4 striscioline. Arrotola 1 filetto d'alice attorno alla strisciolina di sottiletta e infilala delicatamente nella cavità del fiore. Richiudi la punta dei petali attorcigliandoli a ciuffetto per sigillare il ripieno.
       </p>
     </div>
@@ -471,8 +471,8 @@ textarea.input-text { min-height: 90px; resize: vertical; }
         <span class="step-num">Fase 3 · 4 min</span>
         <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(2, this.checked)"> Fatto</label>
       </div>
-      <div class="step-title">🥣 La Pastella a Shock Termico (Segreto di Croccantezza)</div>
-      <p class="step-desc">
+      <div class="step-title" id="step2Title">🥣 La Pastella a Shock Termico (Segreto di Croccantezza)</div>
+      <p class="step-desc" id="step2Desc">
         In una ciotola versa la farina setacciata e un pizzico di sale. Unisci l'<strong>acqua frizzante ghiacciata</strong> (o birra freddissima da freezer) a filo mescolando rapidamente con una forchetta. Non lavorarla troppo: qualche grumetto in frittura diventerà una perla croccante! La densità deve velare il dorso del cucchiaio.
       </p>
       <div class="callout">
@@ -486,8 +486,8 @@ textarea.input-text { min-height: 90px; resize: vertical; }
         <span class="step-num">Fase 4 · 8 min</span>
         <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(3, this.checked)"> Fatto</label>
       </div>
-      <div class="step-title">🔥 Frittura a 180°C</div>
-      <p class="step-desc">
+      <div class="step-title" id="step3Title">🔥 Frittura a 180°C</div>
+      <p class="step-desc" id="step3Desc">
         Scalda abbondante olio di arachide a 175°-180°C in padella profonda. Prendi un fiore per il gambo, passalo nella pastella fredda, lascia colare l'eccesso per 1 secondo e tuffalo nell'olio caldo. Friggi 3-4 pezzi alla volta per 2-3 minuti girandoli a metà fino a doratura uniforme.
       </p>
     </div>
@@ -498,8 +498,8 @@ textarea.input-text { min-height: 90px; resize: vertical; }
         <span class="step-num">Fase 5 · 2 min</span>
         <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(4, this.checked)"> Fatto</label>
       </div>
-      <div class="step-title">🧂 Salatura & Servizio Immediato</div>
-      <p class="step-desc">
+      <div class="step-title" id="step4Title">🧂 Salatura & Servizio Immediato</div>
+      <p class="step-desc" id="step4Desc">
         Scola i fiori su carta paglia assorbente. Aggiungi il sale in fiocchi o fino <strong>SOLO un istante prima di servirli</strong> (il sale anticipato toglie croccantezza). Servili caldissimi con spicchi di limone fresco!
       </p>
     </div>
@@ -671,26 +671,71 @@ function renderIngredients() {
     };
     ul.appendChild(li);
   });
+
+  renderSteps();
+}
+
+function renderSteps() {
+  const count = currentFlowers;
+  const farinaQty = Math.max(60, Math.round(count * 12.5));
+  const acquaQty = Math.max(75, Math.round(count * 16));
+  const olioQty = count <= 8 ? 500 : (count <= 16 ? 650 : 800);
+
+  // Fase 1: Pulizia
+  const s0 = document.getElementById('step0Desc');
+  if (s0) {
+    s0.innerHTML = `Prendi i tuoi <strong>${count} fiori di zucca freschi</strong>. Non lavarli sotto l'acqua diretta per non inzupparli, ma puliscili delicatamente con carta da cucina inumidita. Rimuovi le escrescenze verdi alla base del calice. Apri con cura i petali ed estrai il pistillo interno (è amaro). Lascia 1-2 cm di gambo per afferrarli agevolmente.`;
+  }
+
+  // Fase 2: Farcitura
+  const s1Title = document.getElementById('step1Title');
+  const s1Desc = document.getElementById('step1Desc');
+  if (s1Desc) {
+    if (currentVariant === 'sottiletta') {
+      const fette = Math.ceil(count / 4);
+      const strisce = fette * 4;
+      if (s1Title) s1Title.textContent = '🧀 Farcitura con Sottiletta & Alici';
+      s1Desc.innerHTML = `Prendi le <strong>${fette} ${fette === 1 ? 'fetta' : 'fette'} di sottiletta</strong> e taglia ciascuna in 4 listarelle (otterrai ${strisce} striscioline, te ne serviranno ${count}). Prendi i <strong>${count} filetti d'alici</strong>: arrotola 1 filetto d'alice attorno a una striscia di sottiletta e infilala al centro di ciascuno dei <strong>${count} fiori</strong>. Richiudi la punta dei petali attorcigliandoli a ciuffetto per sigillare il ripieno.`;
+    } else if (currentVariant === 'patata') {
+      const patataQty = Math.round(count * 10);
+      if (s1Title) s1Title.textContent = '🥔 Farcitura con Purea di Patate al Timo & Alici';
+      s1Desc.innerHTML = `Prendi i <strong>${patataQty} g di purea di patata</strong> lessa condita con olio EVO, pepe e timo. Ricava una noce di purea per ogni fiore (~10 g), avvolgici attorno 1 dei <strong>${count} filetti d'alici</strong> e posizionala delicatamente al centro di ciascuno dei <strong>${count} fiori</strong>. Sigilla la cima dei petali con una leggera torsione.`;
+    } else {
+      const falde = Math.max(1, Math.ceil(count / 2));
+      if (s1Title) s1Title.textContent = '🍅 Farcitura con Alici, Pomodorini Secchi & Capperi';
+      s1Desc.innerHTML = `Prendi i <strong>${count} filetti d'alici</strong>, le <strong>${falde} falde di pomodori secchi</strong> a tocchetti e i <strong>${count} capperi</strong> dissalati. Inserisci 1 alice, 1 tocchetto di pomodoro e 1 cappero in ciascuno dei <strong>${count} fiori</strong>. Sigilla i petali a ciuffetto.`;
+    }
+  }
+
+  // Fase 3: Pastella
+  const s2 = document.getElementById('step2Desc');
+  if (s2) {
+    s2.innerHTML = `In una ciotola versa i <strong>${farinaQty} g di farina 00</strong> setacciata con un pizzico di sale. Unisci a filo i <strong>${acquaQty} ml di acqua frizzante ghiacciata</strong> (o birra freddissima da freezer), mescolando rapidamente con una forchetta per pochissimi secondi. <em>Non lavorare a lungo:</em> i piccoli grumi di farina diventeranno perle croccanti in frittura! La densità finale deve velare il dorso di un cucchiaio.`;
+  }
+
+  // Fase 4: Frittura
+  const s3 = document.getElementById('step3Desc');
+  if (s3) {
+    s3.innerHTML = `Versa in padella profonda o wok i <strong>${olioQty} ml di olio di arachide</strong> e scaldalo a <strong>175°–180°C</strong> (immergendo uno stecchino di legno deve riempirsi subito di bollicine fitte). Prendi i <strong>${count} fiori</strong> per il gambo uno ad uno, immergili nella pastella gelata, lascia colare l'eccesso per 1 secondo e tuffali nell'olio caldo. Friggi 3-4 pezzi alla volta per 2-3 minuti girandoli a metà fino a doratura uniforme.`;
+  }
+
+  // Fase 5: Salatura & Servizio
+  const s4 = document.getElementById('step4Desc');
+  if (s4) {
+    s4.innerHTML = `Scola i <strong>${count} fiori</strong> con una schiumarola su carta assorbente o paglia. Aggiungi il sale in fiocchi o fino <strong>SOLO un istante prima di servirli</strong> (il sale anticipato toglie croccantezza). Servili caldissimi con spicchi di limone fresco!`;
+  }
 }
 
 function changeVariant(val) {
   currentVariant = val;
   const hint = document.getElementById('variantHint');
-  const s2Title = document.getElementById('step2Title');
-  const s2Desc = document.getElementById('step2Desc');
 
   if (val === 'sottiletta') {
     hint.innerHTML = '🧀 <strong>Ripieno classico:</strong> La sottiletta fonde all’istante creando un cuore setoso che avvolge l’alice.';
-    s2Title.textContent = '🧀 Farcitura con Sottiletta & Alici';
-    s2Desc.textContent = 'Taglia ogni fetta di sottiletta in 4 striscioline. Arrotola 1 filetto d’alice attorno alla strisciolina e inseriscila nel fiore. Attorciglia la punta dei petali per chiudere.';
   } else if (val === 'patata') {
     hint.innerHTML = '🥔 <strong>Variante Senza Formaggio (Patata & Alici):</strong> La noce di purea di patata condita con timo e pepe dona una cremosità vellutata e asciutta, perfetta per chi non tollera o non desidera formaggi.';
-    s2Title.textContent = '🥔 Farcitura con Purea di Patate al Timo & Alici';
-    s2Desc.textContent = 'Prendi una nocciolina di purea di patata lessa schiacciata (condita con olio, pepe e timo). Avvolgici attorno 1 filetto d’alice e posizionala delicatamente al centro del fiore. Sigilla i petali attorcigliando la cima.';
   } else {
     hint.innerHTML = '🍅 <strong>Variante Senza Formaggio (Mediterranea Pura):</strong> Alice, pomodorino secco sminuzzato e cappero dissalato per un gusto iodato e sapido intenso.';
-    s2Title.textContent = '🍅 Farcitura con Alici, Pomodorini Secchi & Capperi';
-    s2Desc.textContent = 'Inserisci nel fiore 1 filetto d’alice, un pezzettino di pomodoro secco sott’olio e 1 cappero dissalato. Sigilla i petali.';
   }
 
   renderIngredients();
