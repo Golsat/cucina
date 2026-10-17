@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fiori di Zucca in Pastella · Smart Dashboard</title>
+<style>
+:root {
+  --bg-page: #fbf9f4;
+  --bg-card: #ffffff;
+  --bg-inset: #f6f1e5;
+  --border-line: #e3d9c7;
+  --ink: #1c1813;
+  --ink-secondary: #4f4537;
+  --ink-muted: #857967;
+  
+  --gold: #ea580c;
+  --gold-d: #9a3412;
+  --gold-light: #ffedd5;
+  --gold-border: #fed7aa;
+  
+  --emerald: #059669;
+  --emerald-subtle: #ecfdf5;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-page: #141210;
+    --bg-card: #1f1c18;
+    --bg-inset: #2a251e;
+    --border-line: #42382c;
+    --ink: #f8f6f0;
+    --ink-secondary: #d3c9bc;
+    --ink-muted: #998e7f;
+    --gold: #f97316;
+    --gold-d: #fb923c;
+    --gold-light: #431407;
+    --gold-border: #7c2d12;
+    --emerald: #34d399;
+    --emerald-subtle: #083c2c;
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0;
+  background-color: var(--bg-page);
+  color: var(--ink);
+  font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  padding: 16px 16px 90px;
+}
+.shell { max-width: 920px; margin: 0 auto; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+@media (max-width: 740px) { .hero-grid { grid-template-columns: 1fr; } }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.badge {
+  background: var(--gold-light);
+  color: var(--gold-d);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--gold-border);
+}
+h1 { margin: 0 0 8px; font-size: 1.85rem; color: var(--gold-d); letter-spacing: -0.02em; line-height: 1.2; }
+.desc { color: var(--ink-secondary); margin: 0 0 16px; font-size: 0.98rem; }
+.hero-img-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-line);
+  max-height: 260px;
+}
+.hero-img { width: 100%; height: 100%; max-height: 260px; object-fit: cover; display: block; }
+
+/* Box Varianti e Porzioni */
+.control-box {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+.select-styled {
+  appearance: none;
+  background: var(--bg-card);
+  color: var(--ink);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  padding: 8px 36px 8px 14px;
+  font: inherit;
+  font-size: 0.96rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Modalità Toggle: Persone vs N° Fiori */
+.mode-toggle {
+  display: inline-flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border-line);
+  border-radius: 99px;
+  padding: 3px;
+  gap: 3px;
+}
+.mode-btn {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  background: var(--gold);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
+}
+
+/* Stepper Contatore Fiori */
+.stepper-wrap {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.stepper-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--gold-d);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.stepper-btn:hover { background: var(--gold-light); }
+.stepper-input {
+  width: 52px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink);
+  outline: none;
+}
+
+/* Preset Chips */
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.chip-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-line);
+  padding: 3px 9px;
+  border-radius: 7px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip-btn:hover, .chip-btn.active {
+  background: var(--gold-light);
+  border-color: var(--gold);
+  color: var(--gold-d);
+}
+
+.variants-container {
+  background: var(--bg-card);
+  border: 2px solid var(--gold-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-top: 14px;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 740px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.ing-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.ing-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--bg-inset);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+.ing-item.done { opacity: 0.45; text-decoration: line-through; }
+.ing-item input { width: 18px; height: 18px; accent-color: var(--emerald); cursor: pointer; }
+.ing-name { flex: 1; font-size: 0.93rem; font-weight: 500; }
+.ing-qty { font-weight: 700; color: var(--gold); min-width: 90px; text-align: right; }
+
+/* Timers */
+.timer-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 12px; }
+.timer-box {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-md);
+  padding: 12px 8px;
+  text-align: center;
+}
+.timer-title { font-size: 0.72rem; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; }
+.timer-val { font-family: monospace; font-size: 1.8rem; font-weight: 800; color: var(--gold-d); margin: 2px 0 6px; }
+.btn-sm {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: #fff;
+  cursor: pointer;
+}
+.btn-sm.sec { background: var(--bg-card); color: var(--ink); border-color: var(--border-line); }
+
+/* Passaggi Ricetta */
+.step-item {
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--bg-card);
+}
+.step-item.checked { border-color: var(--emerald); background: var(--emerald-subtle); }
+.step-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.step-num { font-weight: 700; font-size: 0.8rem; color: var(--gold-d); background: var(--gold-light); padding: 2px 8px; border-radius: 6px; }
+.step-title { margin: 0 0 6px; font-size: 1.05rem; font-weight: 700; }
+.step-desc { margin: 0; color: var(--ink-secondary); font-size: 0.93rem; line-height: 1.5; }
+.step-desc strong { color: var(--ink); }
+.callout {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--gold-light);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.84rem;
+  color: var(--gold-d);
+}
+
+/* Note */
+.input-text {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-line);
+  background: var(--bg-inset);
+  color: var(--ink);
+  outline: none;
+}
+textarea.input-text { min-height: 90px; resize: vertical; }
+
+.star-box { display: inline-flex; gap: 6px; font-size: 1.7rem; cursor: pointer; user-select: none; }
+.star-box span { color: var(--border-line); }
+.star-box span.active { color: #f59e0b; }
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--bg-page);
+  padding: 9px 18px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Header Nav -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+    <a href="../index.html" style="color:var(--gold); font-weight:700; text-decoration:none; font-size:0.9rem;">← Torna al Ricettario</a>
+    <button class="btn-sm" style="background:var(--bg-inset); color:var(--ink); border-color:var(--border-line);" onclick="copyIngs()">📋 Copia Lista</button>
+  </div>
+
+  <!-- Hero Card -->
+  <div class="card">
+    <div class="hero-grid">
+      <div>
+        <div class="badges">
+          <span class="badge">🔪 Prep: 20 min</span>
+          <span class="badge">🔥 Frittura: 10 min</span>
+          <span class="badge">⏱️ Totale: 30 min</span>
+          <span class="badge">✨ Shock Termico</span>
+        </div>
+        <h1>🌸 Fiori di Zucca in Pastella</h1>
+        <p class="desc">Croccantissimi fiori ripieni con sottiletta filante e alici sapide, avvolti da una pastella leggera e asciutta a shock termico con acqua frizzante ghiacciata.</p>
+        
+        <!-- Controlli: Modalità di Calcolo (Persone o N° Fiori) -->
+        <div class="control-box">
+          <div style="flex: 1 1 200px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+              <b style="font-size:0.95rem;">Calcola Dosi Per:</b>
+              <div class="mode-toggle">
+                <button type="button" class="mode-btn active" id="btnModePersons" onclick="setMode('persons')">👥 Persone</button>
+                <button type="button" class="mode-btn" id="btnModeFlowers" onclick="setMode('flowers')">🌸 N° Fiori</button>
+              </div>
+            </div>
+            <div id="modeSubText" style="font-size:0.8rem; color:var(--ink-muted);">Dosi per <strong>4 persone</strong> (16 fiori calcolati)</div>
+          </div>
+
+          <!-- Selettore Per Persone -->
+          <div id="personsControl" style="display:block;">
+            <select id="portionSelect" class="select-styled" onchange="setPortions(this.value)">
+              <option value="1">1 Persona (4 fiori)</option>
+              <option value="2">2 Persone (8 fiori)</option>
+              <option value="3">3 Persone (12 fiori)</option>
+              <option value="4" selected>4 Persone (16 fiori)</option>
+              <option value="5">5 Persone (20 fiori)</option>
+              <option value="6">6 Persone (24 fiori)</option>
+            </select>
+          </div>
+
+          <!-- Selettore Per Numero di Fiori -->
+          <div id="flowersControl" style="display:none; text-align:right;">
+            <div style="display:inline-flex; align-items:center; gap:8px;">
+              <span style="font-size:0.85rem; font-weight:700; color:var(--ink-secondary);">Fiori:</span>
+              <div class="stepper-wrap">
+                <button type="button" class="stepper-btn" onclick="stepFlowers(-1)">−</button>
+                <input type="number" id="flowersInput" class="stepper-input" value="16" min="2" max="60" onchange="setFlowersCount(this.value)">
+                <button type="button" class="stepper-btn" onclick="stepFlowers(1)">+</button>
+              </div>
+            </div>
+            <div class="chips-row" style="justify-content:flex-end;">
+              <button type="button" class="chip-btn" data-val="6" onclick="setFlowersCount(6)">6 pz</button>
+              <button type="button" class="chip-btn" data-val="8" onclick="setFlowersCount(8)">8 pz</button>
+              <button type="button" class="chip-btn" data-val="10" onclick="setFlowersCount(10)">10 pz</button>
+              <button type="button" class="chip-btn" data-val="12" onclick="setFlowersCount(12)">12 pz</button>
+              <button type="button" class="chip-btn active" data-val="16" onclick="setFlowersCount(16)">16 pz</button>
+              <button type="button" class="chip-btn" data-val="20" onclick="setFlowersCount(20)">20 pz</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Switch Varianti Dispensa: Con o Senza Sottiletta / Formaggio -->
+        <div class="variants-container">
+          <div style="font-size:0.88rem; font-weight:700; color:var(--gold-d); margin-bottom:6px;">🔄 Variante Ripieno (Cosa hai a casa?):</div>
+          <select id="variantSelect" class="select-styled" style="width:100%;" onchange="changeVariant(this.value)">
+            <option value="sottiletta" selected>🧀 Sottiletta & Alici (Classica Fondente)</option>
+            <option value="patata">🥔 Senza Formaggio: Purea di Patate al Timo & Alici</option>
+            <option value="mediterranea">🍅 Senza Formaggio: Alici, Pomodorini Secchi & Capperi</option>
+          </select>
+
+          <div id="variantHint" class="callout">
+            🧀 <strong>Ripieno classico:</strong> La sottiletta fonde istantaneamente creando un cuore cremoso e filante che avvolge il filetto d'alice sapido.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Foto Risultato Finale -->
+      <div class="hero-img-wrap">
+        <img src="assets/dish_final.jpg" alt="Fiori di zucca fritti in pastella" class="hero-img" onerror="this.src='../POLLO_AL_CURRY/assets/dish_final.jpg'">
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingredienti & Timer -->
+  <div class="grid-2">
+    <div class="card">
+      <h2 style="margin:0 0 12px; font-size:1.15rem; color:var(--gold-d);">🛒 Ingredienti (clicca per spuntare)</h2>
+      <ul class="ing-list" id="ingList"></ul>
+    </div>
+
+    <div>
+      <!-- Foto Mise en Place -->
+      <div class="card" style="margin-bottom:14px; padding:12px;">
+        <img src="assets/ingredients_flatlay.jpg" alt="Mise en place fiori di zucca" style="width:100%; height:160px; object-fit:cover; border-radius:10px; display:block;" onerror="this.src='../POLLO_AL_CURRY/assets/ingredients_flatlay.jpg'">
+        <div style="font-size:0.78rem; text-align:center; color:var(--ink-muted); margin-top:6px;">Mise en place: fiori freschi, pastella ghiacciata e ripieno</div>
+      </div>
+
+      <!-- Timer Frittura -->
+      <div class="card">
+        <h2 style="margin:0 0 6px; font-size:1.1rem; color:var(--gold-d);">⏱️ Timer Rapidi</h2>
+        <div class="timer-row">
+          <div class="timer-box">
+            <div class="timer-title">🧊 Riposo Pastella</div>
+            <div class="timer-val" id="t-chill">10:00</div>
+            <button class="btn-sm" onclick="toggleTimer('chill', 600)">Avvia</button>
+            <button class="btn-sm sec" onclick="resetTimer('chill', 600)">↺</button>
+          </div>
+          <div class="timer-box">
+            <div class="timer-title">🔥 Frittura / Lato</div>
+            <div class="timer-val" id="t-fry">01:30</div>
+            <button class="btn-sm" onclick="toggleTimer('fry', 90)">Avvia</button>
+            <button class="btn-sm sec" onclick="resetTimer('fry', 90)">↺</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Passaggi Dettagliati -->
+  <div class="card">
+    <h2 style="margin:0 0 14px; font-size:1.25rem; color:var(--gold-d);">👨‍🍳 Come Fare la Pastella & Friggere i Fiori</h2>
+    
+    <!-- Step 1 -->
+    <div class="step-item" id="step-0">
+      <div class="step-top">
+        <span class="step-num">Fase 1 · 5 min</span>
+        <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(0, this.checked)"> Fatto</label>
+      </div>
+      <div class="step-title">🌸 Pulizia Delicata dei Fiori</div>
+      <p class="step-desc">
+        Non lavare i fiori sotto l'acqua diretta per non inzupparli. Puliscili con carta inumidita. Rimuovi le escrescenze verdi alla base del calice. Apri con cura i petali ed estrai il pistillo interno (è amaro). Lascia 1-2 cm di gambo per afferrarli agevolmente.
+      </p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-item" id="step-1">
+      <div class="step-top">
+        <span class="step-num">Fase 2 · 8 min</span>
+        <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(1, this.checked)"> Fatto</label>
+      </div>
+      <div class="step-title" id="step2Title">🧀 Farcitura dei Fiori</div>
+      <p class="step-desc" id="step2Desc">
+        Taglia ogni sottiletta in 4 striscioline. Arrotola 1 filetto d'alice attorno alla strisciolina di sottiletta e infilala delicatamente nella cavità del fiore. Richiudi la punta dei petali attorcigliandoli a ciuffetto per sigillare il ripieno.
+      </p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-item" id="step-2">
+      <div class="step-top">
+        <span class="step-num">Fase 3 · 4 min</span>
+        <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(2, this.checked)"> Fatto</label>
+      </div>
+      <div class="step-title">🥣 La Pastella a Shock Termico (Segreto di Croccantezza)</div>
+      <p class="step-desc">
+        In una ciotola versa la farina setacciata e un pizzico di sale. Unisci l'<strong>acqua frizzante ghiacciata</strong> (o birra freddissima da freezer) a filo mescolando rapidamente con una forchetta. Non lavorarla troppo: qualche grumetto in frittura diventerà una perla croccante! La densità deve velare il dorso del cucchiaio.
+      </p>
+      <div class="callout">
+        💡 <strong>Il Segreto dello Shock Termico:</strong> Il contrasto tra la pastella ghiacciata e l'olio a 180°C impedisce l'assorbimento dell'unto e regala una crosticina vetrosa e asciutta.
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-item" id="step-3">
+      <div class="step-top">
+        <span class="step-num">Fase 4 · 8 min</span>
+        <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(3, this.checked)"> Fatto</label>
+      </div>
+      <div class="step-title">🔥 Frittura a 180°C</div>
+      <p class="step-desc">
+        Scalda abbondante olio di arachide a 175°-180°C in padella profonda. Prendi un fiore per il gambo, passalo nella pastella fredda, lascia colare l'eccesso per 1 secondo e tuffalo nell'olio caldo. Friggi 3-4 pezzi alla volta per 2-3 minuti girandoli a metà fino a doratura uniforme.
+      </p>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-item" id="step-4">
+      <div class="step-top">
+        <span class="step-num">Fase 5 · 2 min</span>
+        <label style="cursor:pointer; font-size:0.85rem;"><input type="checkbox" onchange="toggleStep(4, this.checked)"> Fatto</label>
+      </div>
+      <div class="step-title">🧂 Salatura & Servizio Immediato</div>
+      <p class="step-desc">
+        Scola i fiori su carta paglia assorbente. Aggiungi il sale in fiocchi o fino <strong>SOLO un istante prima di servirli</strong> (il sale anticipato toglie croccantezza). Servili caldissimi con spicchi di limone fresco!
+      </p>
+    </div>
+  </div>
+
+  <!-- Note di Revisione -->
+  <div class="card">
+    <h2 style="margin:0 0 8px; font-size:1.15rem; color:var(--gold-d);">📝 Diario & Note di Revisione</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+      <div>
+        <label style="font-size:0.8rem; font-weight:700; color:var(--ink-muted);">Data frittura:</label>
+        <input type="date" id="revDate" class="input-text">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:700; color:var(--ink-muted);">Voto croccantezza:</label>
+        <div class="star-box" id="revStars">
+          <span data-s="1">★</span><span data-s="2">★</span><span data-s="3">★</span><span data-s="4">★</span><span data-s="5">★</span>
+        </div>
+      </div>
+    </div>
+    <textarea id="revNotes" class="input-text" placeholder="Es: Pastella venuta leggerissima e croccante; temperatura olio perfetta con stecchino; la sottiletta fonde meglio della mozzarella fresca che rilascia acqua..."></textarea>
+    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn-sm" style="padding:8px 16px;" onclick="saveReview()">💾 Salva Note</button>
+      <span style="font-size:0.8rem; color:var(--ink-muted);">Salvataggio nel browser</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toastMsg">Lista copiata!</div>
+
+<script>
+let currentMode = 'persons'; // 'persons' | 'flowers'
+let currentPortions = 4;     // default 4 persone
+let currentFlowers = 16;     // default 16 fiori
+let currentVariant = 'sottiletta';
+let checkedIngs = JSON.parse(localStorage.getItem('fiori_zucca_chk') || '[]');
+
+function setMode(mode) {
+  currentMode = mode;
+  const btnP = document.getElementById('btnModePersons');
+  const btnF = document.getElementById('btnModeFlowers');
+  const pCtrl = document.getElementById('personsControl');
+  const fCtrl = document.getElementById('flowersControl');
+  const subText = document.getElementById('modeSubText');
+
+  if (mode === 'persons') {
+    btnP.classList.add('active');
+    btnF.classList.remove('active');
+    pCtrl.style.display = 'block';
+    fCtrl.style.display = 'none';
+    currentFlowers = currentPortions * 4;
+    subText.innerHTML = `Dosi per <strong>${currentPortions} persone</strong> (${currentFlowers} fiori calcolati)`;
+  } else {
+    btnP.classList.remove('active');
+    btnF.classList.add('active');
+    pCtrl.style.display = 'none';
+    fCtrl.style.display = 'block';
+    const approxP = (currentFlowers / 4).toFixed(1).replace('.0', '');
+    subText.innerHTML = `Dosi per <strong>${currentFlowers} fiori</strong> (circa ${approxP} persone)`;
+    updateFlowerChips(currentFlowers);
+  }
+  renderIngredients();
+}
+
+function setPortions(val) {
+  currentPortions = parseInt(val, 10);
+  currentFlowers = currentPortions * 4;
+  const subText = document.getElementById('modeSubText');
+  if (subText && currentMode === 'persons') {
+    subText.innerHTML = `Dosi per <strong>${currentPortions} persone</strong> (${currentFlowers} fiori calcolati)`;
+  }
+  renderIngredients();
+}
+
+function setFlowersCount(val) {
+  let count = parseInt(val, 10);
+  if (isNaN(count) || count < 2) count = 2;
+  if (count > 60) count = 60;
+  currentFlowers = count;
+  const input = document.getElementById('flowersInput');
+  if (input) input.value = count;
+  const approxP = (currentFlowers / 4).toFixed(1).replace('.0', '');
+  const subText = document.getElementById('modeSubText');
+  if (subText && currentMode === 'flowers') {
+    subText.innerHTML = `Dosi per <strong>${currentFlowers} fiori</strong> (circa ${approxP} persone)`;
+  }
+  updateFlowerChips(count);
+  renderIngredients();
+}
+
+function stepFlowers(delta) {
+  setFlowersCount(currentFlowers + delta);
+}
+
+function updateFlowerChips(count) {
+  document.querySelectorAll('.chip-btn').forEach(btn => {
+    const val = parseInt(btn.dataset.val || btn.textContent, 10);
+    btn.classList.toggle('active', val === count);
+  });
+}
+
+function getIngredients() {
+  const count = currentFlowers;
+  // Base proporzionata pastella: 12.5g farina e 16ml acqua a fiore (minimo 60g farina per ciotola confortevole)
+  const farinaQty = Math.max(60, Math.round(count * 12.5));
+  const acquaQty = Math.max(75, Math.round(count * 16));
+  const olioQty = count <= 8 ? 500 : (count <= 16 ? 650 : 800);
+
+  const items = [
+    { id: 'fiori', name: 'Fiori di zucca freschissimi', qty: count + ' pz' },
+    { id: 'farina', name: 'Farina 00 setacciata (per pastella)', qty: farinaQty + ' g' },
+    { id: 'acqua', name: 'Acqua frizzante ghiacciata (o birra fredda)', qty: acquaQty + ' ml' },
+    { id: 'olio', name: 'Olio di semi di arachide per friggere', qty: olioQty + ' ml' },
+    { id: 'sale', name: 'Sale fino e sale in fiocchi finale', qty: 'q.b.' }
+  ];
+
+  if (currentVariant === 'sottiletta') {
+    const fette = Math.ceil(count / 4);
+    items.splice(1, 0, 
+      { id: 'formaggio', name: 'Sottilette (1/4 di fetta a fiore)', qty: fette + (fette === 1 ? ' fetta' : ' fette') },
+      { id: 'alici', name: 'Filetti di alici sott’olio (1 a fiore)', qty: count + ' filetti' }
+    );
+  } else if (currentVariant === 'patata') {
+    const patataQty = Math.round(count * 10);
+    items.splice(1, 0,
+      { id: 'patata', name: 'Purea di patata al timo & olio EVO (1 noce a fiore)', qty: patataQty + ' g' },
+      { id: 'alici', name: 'Filetti di alici sott’olio (1 a fiore)', qty: count + ' filetti' }
+    );
+  } else {
+    const falde = Math.max(1, Math.ceil(count / 2));
+    items.splice(1, 0,
+      { id: 'alici', name: 'Filetti di alici sott’olio', qty: count + ' filetti' },
+      { id: 'pomodori', name: 'Pomodorini secchi sott’olio a tocchetti', qty: falde + ' falde' },
+      { id: 'capperi', name: 'Capperi dissalati (1 a fiore)', qty: count + ' pz' }
+    );
+  }
+
+  return items;
+}
+
+function renderIngredients() {
+  const ul = document.getElementById('ingList');
+  ul.innerHTML = '';
+  const items = getIngredients();
+
+  items.forEach(item => {
+    const isDone = checkedIngs.includes(item.id);
+    const li = document.createElement('li');
+    li.className = 'ing-item' + (isDone ? ' done' : '');
+    li.innerHTML = `
+      <input type="checkbox" ${isDone ? 'checked' : ''}>
+      <span class="ing-name">${item.name}</span>
+      <span class="ing-qty">${item.qty}</span>
+    `;
+    li.onclick = (e) => {
+      if (e.target.tagName !== 'INPUT') {
+        const c = li.querySelector('input');
+        c.checked = !c.checked;
+      }
+      const c = li.querySelector('input');
+      if (c.checked) {
+        if (!checkedIngs.includes(item.id)) checkedIngs.push(item.id);
+      } else {
+        checkedIngs = checkedIngs.filter(x => x !== item.id);
+      }
+      li.classList.toggle('done', c.checked);
+      localStorage.setItem('fiori_zucca_chk', JSON.stringify(checkedIngs));
+    };
+    ul.appendChild(li);
+  });
+}
+
+function changeVariant(val) {
+  currentVariant = val;
+  const hint = document.getElementById('variantHint');
+  const s2Title = document.getElementById('step2Title');
+  const s2Desc = document.getElementById('step2Desc');
+
+  if (val === 'sottiletta') {
+    hint.innerHTML = '🧀 <strong>Ripieno classico:</strong> La sottiletta fonde all’istante creando un cuore setoso che avvolge l’alice.';
+    s2Title.textContent = '🧀 Farcitura con Sottiletta & Alici';
+    s2Desc.textContent = 'Taglia ogni fetta di sottiletta in 4 striscioline. Arrotola 1 filetto d’alice attorno alla strisciolina e inseriscila nel fiore. Attorciglia la punta dei petali per chiudere.';
+  } else if (val === 'patata') {
+    hint.innerHTML = '🥔 <strong>Variante Senza Formaggio (Patata & Alici):</strong> La noce di purea di patata condita con timo e pepe dona una cremosità vellutata e asciutta, perfetta per chi non tollera o non desidera formaggi.';
+    s2Title.textContent = '🥔 Farcitura con Purea di Patate al Timo & Alici';
+    s2Desc.textContent = 'Prendi una nocciolina di purea di patata lessa schiacciata (condita con olio, pepe e timo). Avvolgici attorno 1 filetto d’alice e posizionala delicatamente al centro del fiore. Sigilla i petali attorcigliando la cima.';
+  } else {
+    hint.innerHTML = '🍅 <strong>Variante Senza Formaggio (Mediterranea Pura):</strong> Alice, pomodorino secco sminuzzato e cappero dissalato per un gusto iodato e sapido intenso.';
+    s2Title.textContent = '🍅 Farcitura con Alici, Pomodorini Secchi & Capperi';
+    s2Desc.textContent = 'Inserisci nel fiore 1 filetto d’alice, un pezzettino di pomodoro secco sott’olio e 1 cappero dissalato. Sigilla i petali.';
+  }
+
+  renderIngredients();
+}
+
+function toggleStep(idx, isDone) {
+  const el = document.getElementById('step-' + idx);
+  if (el) el.classList.toggle('checked', isDone);
+}
+
+function copyIngs() {
+  const items = getIngredients();
+  const descInfo = currentMode === 'persons'
+    ? `${currentPortions} persone (${currentFlowers} fiori)`
+    : `${currentFlowers} fiori (circa ${(currentFlowers / 4).toFixed(1).replace('.0','')} persone)`;
+  let txt = `🛒 Fiori di Zucca in Pastella (${descInfo} - variante ${currentVariant}):\n`;
+  items.forEach(i => txt += `- ${i.name}: ${i.qty}\n`);
+  navigator.clipboard.writeText(txt).then(() => {
+    const t = document.getElementById('toastMsg');
+    t.textContent = 'Lista ingredienti copiata!';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+}
+
+// Timer con WebAudio
+const timers = {};
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioCtx ? new AudioCtx() : null;
+
+function chime() {
+  if (!audioCtx) return;
+  try {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+  } catch(e) {}
+}
+
+function fmt(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function toggleTimer(id, defSec) {
+  if (!timers[id]) timers[id] = { sec: defSec, int: null };
+  const t = timers[id];
+  const disp = document.getElementById('t-' + id);
+  if (t.int) {
+    clearInterval(t.int); t.int = null;
+  } else {
+    t.int = setInterval(() => {
+      t.sec--;
+      disp.textContent = fmt(t.sec);
+      if (t.sec <= 0) {
+        clearInterval(t.int); t.int = null;
+        chime();
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer(id, defSec) {
+  if (timers[id]) { clearInterval(timers[id].int); timers[id] = null; }
+  document.getElementById('t-' + id).textContent = fmt(defSec);
+}
+
+// Stelle e Note
+let currentRating = 5;
+function initStars() {
+  const box = document.getElementById('revStars');
+  Array.from(box.children).forEach(s => {
+    s.onclick = () => {
+      currentRating = parseInt(s.dataset.s, 10);
+      Array.from(box.children).forEach(star => {
+        star.classList.toggle('active', parseInt(star.dataset.s, 10) <= currentRating);
+      });
+    };
+  });
+  Array.from(box.children).forEach(s => s.classList.add('active'));
+}
+
+function saveReview() {
+  const txt = document.getElementById('revNotes').value.trim();
+  const date = document.getElementById('revDate').value || new Date().toISOString().slice(0, 10);
+  if (!txt) { alert("Inserisci una nota prima di salvare."); return; }
+  const all = JSON.parse(localStorage.getItem('gianluca_recipe_reviews_v1') || '{}');
+  if (!all['fiori_zucca']) all['fiori_zucca'] = [];
+  all['fiori_zucca'].push({ date: date, stars: currentRating, text: txt, variant: currentVariant });
+  localStorage.setItem('gianluca_recipe_reviews_v1', JSON.stringify(all));
+  alert("Nota salvata!");
+}
+
+document.getElementById('revDate').value = new Date().toISOString().slice(0, 10);
+renderIngredients();
+initStars();
+</script>
+</body>
+</html>
