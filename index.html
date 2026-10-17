@@ -201,6 +201,7 @@ body {
 }
 .tag-curry { background: var(--curry-light); color: var(--curry-d); border: 1px solid var(--curry-border); }
 .tag-olive { background: var(--olive-light); color: var(--olive-d); }
+.tag-gold { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
 .recipe-tile-title {
   margin: 0 0 6px;
   font-size: 1.18rem;
@@ -497,7 +498,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
       <div class="stat-pill">
         <div class="stat-icon">📖</div>
         <div>
-          <div class="stat-val" id="totalRecipesCount">2</div>
+          <div class="stat-val" id="totalRecipesCount">3</div>
           <div class="stat-lbl">Ricette in Cartella</div>
         </div>
       </div>
@@ -564,6 +565,27 @@ textarea.form-input { min-height: 100px; resize: vertical; }
             <div class="recipe-tile-footer" style="color:#4a5619;">
               <span>⚖️ Calcolo peso olive</span>
               <span>Apri Dashboard →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. Fiori di Zucca in Pastella -->
+        <article class="recipe-tile" onclick="window.location.href='FIORI_DI_ZUCCA/DASHBOARD-FIORI-DI-ZUCCA.html'">
+          <img src="FIORI_DI_ZUCCA/assets/dish_final.jpg" alt="Fiori di zucca fritti in pastella" class="recipe-tile-img">
+          <div class="recipe-tile-body">
+            <div class="recipe-tags">
+              <span class="tag tag-gold">🔪 Prep: 20 min</span>
+              <span class="tag tag-gold">🔥 Frittura: 10 min</span>
+              <span class="tag tag-gold">⏱️ Totale: 30 min</span>
+              <span class="tag tag-gold">✨ Shock Termico</span>
+            </div>
+            <h3 class="recipe-tile-title" style="color:var(--gold, #c2410c);">🌸 Fiori di Zucca in Pastella</h3>
+            <p class="recipe-tile-desc">
+              Pastella croccante e asciutta all'acqua ghiacciata con ripieno filante di sottiletta e alici, più varianti cremose senza formaggio (patate ed erbe).
+            </p>
+            <div class="recipe-tile-footer" style="color:#c2410c;">
+              <span>🌸 Per Persone o N° Fiori</span>
+              <span>Apri Ricetta →</span>
             </div>
           </div>
         </article>
@@ -785,6 +807,7 @@ textarea.form-input { min-height: 100px; resize: vertical; }
           <label class="input-label">Ricetta da revisionare:</label>
           <select id="noteRecipeSelector" class="form-input" onchange="displayRecipeReviews(this.value)">
             <option value="pollo_curry" selected>🍛 Pollo al Curry con Riso Basmati</option>
+            <option value="fiori_zucca">🌸 Fiori di Zucca in Pastella</option>
             <option value="olive">🫒 Conserva Olive (Esperia)</option>
           </select>
         </div>
