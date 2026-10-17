@@ -238,6 +238,14 @@ h1 { margin: 0 0 8px; font-size: 1.85rem; color: var(--gold-d); letter-spacing: 
 }
 .timer-title { font-size: 0.72rem; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; }
 .timer-val { font-family: monospace; font-size: 1.8rem; font-weight: 800; color: var(--gold-d); margin: 2px 0 6px; }
+@keyframes alarmFlash {
+  0%, 100% { color: #dc2626; transform: scale(1.08); }
+  50% { color: #ea580c; transform: scale(1); }
+}
+.alarm-pulse {
+  animation: alarmFlash 0.55s infinite ease-in-out;
+  font-weight: 900 !important;
+}
 .btn-sm {
   font: inherit;
   font-size: 0.8rem;
@@ -761,21 +769,48 @@ function copyIngs() {
   });
 }
 
-// Timer con WebAudio
+// Timer con WebAudio (Offline)
 const timers = {};
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 const audioCtx = AudioCtx ? new AudioCtx() : null;
 
-function chime() {
+function unlockAudio() {
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+}
+
+// Sblocco audio su interazione per compatibilità mobile iOS/Android
+document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+document.addEventListener('click', unlockAudio, { once: true, passive: true });
+
+function playAlarmSound() {
   if (!audioCtx) return;
   try {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    const now = audioCtx.currentTime;
+    // Allarme squillante: 3 serie di doppi bip da cucina (880Hz / 1046Hz)
+    const beeps = [
+      { t: 0.0, f: 880 },
+      { t: 0.15, f: 1046 },
+      { t: 0.55, f: 880 },
+      { t: 0.70, f: 1046 },
+      { t: 1.10, f: 880 },
+      { t: 1.25, f: 1046 },
+      { t: 1.65, f: 1046 }
+    ];
+    beeps.forEach(b => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(b.f, now + b.t);
+      gain.gain.setValueAtTime(0.4, now + b.t);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + b.t + 0.12);
+      osc.start(now + b.t);
+      osc.stop(now + b.t + 0.13);
+    });
   } catch(e) {}
 }
 
@@ -786,26 +821,43 @@ function fmt(sec) {
 }
 
 function toggleTimer(id, defSec) {
+  unlockAudio();
   if (!timers[id]) timers[id] = { sec: defSec, int: null };
   const t = timers[id];
   const disp = document.getElementById('t-' + id);
   if (t.int) {
     clearInterval(t.int); t.int = null;
   } else {
+    if (disp) disp.classList.remove('alarm-pulse');
     t.int = setInterval(() => {
       t.sec--;
-      disp.textContent = fmt(t.sec);
+      if (disp) disp.textContent = fmt(t.sec);
       if (t.sec <= 0) {
         clearInterval(t.int); t.int = null;
-        chime();
+        playAlarmSound();
+        if ('vibrate' in navigator) {
+          try { navigator.vibrate([400, 200, 400, 200, 600]); } catch(e) {}
+        }
+        if (disp) disp.classList.add('alarm-pulse');
+        const toast = document.getElementById('toastMsg');
+        if (toast) {
+          toast.textContent = `⏰ Tempo scaduto: ${id === 'chill' ? 'Riposo Pastella' : 'Frittura'}!`;
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3500);
+        }
       }
     }, 1000);
   }
 }
 
 function resetTimer(id, defSec) {
+  unlockAudio();
   if (timers[id]) { clearInterval(timers[id].int); timers[id] = null; }
-  document.getElementById('t-' + id).textContent = fmt(defSec);
+  const disp = document.getElementById('t-' + id);
+  if (disp) {
+    disp.textContent = fmt(defSec);
+    disp.classList.remove('alarm-pulse');
+  }
 }
 
 // Stelle e Note
