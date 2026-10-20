@@ -22,7 +22,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k.startsWith('cucina-') && k !== VERSION).map(k => caches.delete(k)))) // solo le proprie: il dominio ospita altre app
       .then(() => self.clients.claim())
   );
 });
